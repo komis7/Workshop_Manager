@@ -1,0 +1,52 @@
+﻿@model WorkShopManager.Models.Appointment
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Usuń wizytę</h1>
+
+
+<div>
+    <h4>Wizyta</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            Imię i nazwisko
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CustomerName)
+        </dd>
+        <dt class = "col-sm-2">
+            Telefon
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PhoneNumber)
+        </dd>
+        <dt class = "col-sm-2">
+            Samochód
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CarModel)
+        </dd>
+        <dt class = "col-sm-2">
+            Data wizyty
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.AppointmentDate)
+        </dd>
+        <dt class = "col-sm-2">
+            Rodzaj usługi
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ServiceType)
+        </dd>
+    </dl>
+    
+    <h3>Czy na pewno chcesz usunąć tą wizytę?</h3>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Usuń" class="btn btn-danger" /> |
+        <a asp-action="Index">Wróć do listy</a>
+    </form>
+</div>

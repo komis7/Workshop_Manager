@@ -1,0 +1,56 @@
+﻿@model WorkShopManager.Models.ClientEditProfileViewModel
+
+<div class="container mt-4">
+    <h1 class="text-center">Edytuj swoje dane</h1>
+    <form asp-action="EditProfile" method="post" class="mt-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5>Dane kontaktowe</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label asp-for="PhoneNumber" class="form-label">Numer telefonu</label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5>Dane pojazdu</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label asp-for="VehicleBrand" class="form-label">Marka pojazdu</label>
+                    <input asp-for="VehicleBrand" class="form-control" />
+                    <span asp-validation-for="VehicleBrand" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="VehicleModel" class="form-label">Model pojazdu</label>
+                    <input asp-for="VehicleModel" class="form-control" />
+                    <span asp-validation-for="VehicleModel" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="VehicleYear" class="form-label">Rok produkcji</label>
+                    <input asp-for="VehicleYear" class="form-control" />
+                    <span asp-validation-for="VehicleYear" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="VehicleRegistrationNumber" class="form-label">Numer rejestracyjny</label>
+                    <input asp-for="VehicleRegistrationNumber" class="form-control" />
+                    <span asp-validation-for="VehicleRegistrationNumber" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="VehicleVIN" class="form-label">Numer VIN</label>
+                    <input asp-for="VehicleVIN" class="form-control" />
+                    <span asp-validation-for="VehicleVIN" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Zapisz zmiany</button>
+    </form>
+</div>
+
+

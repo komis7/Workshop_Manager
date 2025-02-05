@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Panel Warsztatu";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Witamy w warsztacie</h1>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Zarządzaj Harmonogramem</h5>
+                    <p class="card-text">Przeglądaj, edytuj i usuwaj wizyty w harmonogramie swojego warsztatu.</p>
+                    <a asp-controller="Workshop" asp-action="Schedule" asp-route-id="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value" class="btn btn-primary">Przejdź do harmonogramu</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Zarządzaj Informacjami Warsztatu</h5>
+                    <p class="card-text">Zmień dane swojego warsztatu, takie jak usługi, stawki godzinowe czy lokalizacja.</p>
+                    <a asp-controller="Account" asp-action="UserPanel" class="btn btn-secondary">Edytuj dane warsztatu</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

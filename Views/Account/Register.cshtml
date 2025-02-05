@@ -1,0 +1,27 @@
+﻿@model WorkShopManager.Models.RegisterViewModel
+
+<h1>Rejestracja</h1>
+<form asp-action="Register" method="post">
+    <div>
+        <label asp-for="Email"></label>
+        <input asp-for="Email" />
+    </div>
+    <div>
+        <label asp-for="Password"></label>
+        <input asp-for="Password" type="password" />
+    </div>
+    <div>
+        <label asp-for="ConfirmPassword"></label>
+        <input asp-for="ConfirmPassword" type="password" />
+    </div>
+    <div>
+        <label asp-for="PhoneNumber"></label>
+        <input asp-for="PhoneNumber" />
+    </div>
+    <div>
+        <label asp-for="VehicleDetails"></label>
+        <input asp-for="VehicleDetails" />
+    </div>
+    <button type="submit">Zarejestruj</button>
+</form>
+

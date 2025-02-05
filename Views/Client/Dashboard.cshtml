@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Panel użytkownika";
+}
+
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h1>Witaj, @User.Identity.Name!</h1>
+        <p class="text-muted">Wybierz jedną z poniższych opcji, aby zarządzać swoim kontem.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card text-center shadow-sm h-100 d-flex flex-column">
+                <div class="card-body d-flex flex-column">
+                    <i class="bi bi-pencil-square" style="font-size: 2rem; color: #007bff;"></i>
+                    <h5 class="card-title mt-3">Edytuj dane</h5>
+                    <p class="card-text">Zaktualizuj swoje dane kontaktowe i informacje o pojeździe.</p>
+                    <a href="@Url.Action("EditProfile", "Client")" class="btn btn-primary mt-auto">Przejdź</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center shadow-sm h-100 d-flex flex-column">
+                <div class="card-body d-flex flex-column">
+                    <i class="bi bi-clock-history" style="font-size: 2rem; color: #007bff;"></i>
+                    <h5 class="card-title mt-3">Historia wizyt</h5>
+                    <p class="card-text">Sprawdź listę swoich poprzednich wizyt w warsztatach.</p>
+                    <a href="@Url.Action("VisitHistory", "Client")" class="btn btn-primary mt-auto">Przejdź</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center shadow-sm h-100 d-flex flex-column">
+                <div class="card-body d-flex flex-column">
+                    <i class="bi bi-key" style="font-size: 2rem; color: #007bff;"></i>
+                    <h5 class="card-title mt-3">Zmień hasło</h5>
+                    <p class="card-text">Zabezpiecz swoje konto, zmieniając hasło na nowe.</p>
+                    <a href="@Url.Action("ChangePassword", "Client")" class="btn btn-primary mt-auto">Przejdź</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

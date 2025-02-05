@@ -1,0 +1,62 @@
+﻿@model IEnumerable<WorkShopManager.Models.Appointment>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Lista wizyt</h1>
+
+<p>
+    <a asp-action="Create">Dodaj nową wizytę</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Imię i nazwisko
+            </th>
+            <th>
+                Telefon
+            </th>
+            <th>
+                Samochód
+            </th>
+            <th>
+                Data wizyty
+            </th>
+            <th>
+                Radzaj usługi
+            </th>
+            <th>
+                Akcje
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CustomerName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CarModel)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AppointmentDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ServiceType)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edytuj</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Szczegóły</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Usuń</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

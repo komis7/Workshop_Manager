@@ -1,0 +1,398 @@
+﻿@section Styles {
+    <style>
+        #calendar {
+            max-width: 900px;
+            margin: 40px auto;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            font-size: 1rem;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+
+        .modal-content {
+            border-radius: 8px;
+        }
+
+        .modal-header {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .modal-footer {
+            border-top: none;
+        }
+    </style>
+}
+
+<h1>Harmonogram Warsztatu</h1>
+
+<button id="addEventButton" class="btn btn-primary">Dodaj nową wizytę</button>
+
+<div id="calendar"></div>
+
+@if (User.IsInRole("Workshop"))
+{
+    <div id="time-settings">
+        <label for="slotMinTime">Godzina rozpoczęcia:</label>
+        <input type="time" id="slotMinTime" value="08:00">
+
+        <label for="slotMaxTime">Godzina zakończenia:</label>
+        <input type="time" id="slotMaxTime" value="18:00">
+
+        <button id="applySlotTimes" class="btn btn-primary">Zastosuj</button>
+    </div>
+}
+
+
+<!-- Modal do dodawania wydarzenia -->
+<div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addEventModalLabel">Dodaj nową wizytę</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addEventForm">
+                    <input type="hidden" id="workshopId" value="@ViewBag.WorkshopId" />
+                    <div class="mb-3">
+                        <label for="eventTitle" class="form-label">Nazwa wydarzenia</label>
+                        <input type="text" class="form-control" id="eventTitle" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventDate" class="form-label">Data</label>
+                        <input type="date" class="form-control" id="eventDate" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventTime" class="form-label">Godzina</label>
+                        <input type="time" class="form-control" id="eventTime" required />
+                    </div>
+                    <h5>Dane pojazdu</h5>
+                    <div class="mb-3">
+                        <label for="vehicleMake" class="form-label">Marka</label>
+                        <input type="text" class="form-control" id="vehicleMake" value="@ViewBag.VehicleMake" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehicleModel" class="form-label">Model</label>
+                        <input type="text" class="form-control" id="vehicleModel" value="@ViewBag.VehicleModel" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehicleYear" class="form-label">Rok produkcji</label>
+                        <input type="number" class="form-control" id="vehicleYear" value="@ViewBag.VehicleYear" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehiclePlate" class="form-label">Numer rejestracyjny</label>
+                        <input type="text" class="form-control" id="vehiclePlate" value="@ViewBag.VehiclePlate" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehicleVin" class="form-label">Numer VIN</label>
+                        <input type="text" class="form-control" id="vehicleVin" value="@ViewBag.VehicleVin" />
+                    </div>
+                    <h5>Dane klienta</h5>
+                    <div class="mb-3">
+                        <label for="customerPhone" class="form-label">Numer telefonu</label>
+                        <input type="tel" class="form-control" id="customerPhone" value="@ViewBag.UserPhoneNumber" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="customerEmail" class="form-label">Adres e-mail</label>
+                        <input type="email" class="form-control" id="customerEmail" value="@ViewBag.UserEmail" required />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                <button type="button" class="btn btn-primary" id="saveEventModalButton">Dodaj wydarzenie</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal do szczegółów wydarzenia -->
+<div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-labelledby="eventDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eventDetailsModalLabel">Szczegóły wydarzenia</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="detailEventTitle" class="form-label">Nazwa wydarzenia</label>
+                        <input type="text" class="form-control" id="detailEventTitle" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label for="detailEventDate" class="form-label">Data</label>
+                        <input type="date" class="form-control" id="detailEventDate" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label for="detailEventTime" class="form-label">Godzina</label>
+                        <input type="time" class="form-control" id="detailEventTime" readonly />
+                    </div>
+                    <h5>Dane pojazdu</h5>
+                    <div class="mb-3">
+                        <label for="detailVehicleMake" class="form-label">Marka</label>
+                        <input type="text" class="form-control" id="detailVehicleMake" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label for="detailVehicleModel" class="form-label">Model</label>
+                        <input type="text" class="form-control" id="detailVehicleModel" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label for="detailVehicleYear" class="form-label">Rok produkcji</label>
+                        <input type="number" class="form-control" id="detailVehicleYear" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label for="detailVehiclePlate" class="form-label">Numer rejestracyjny</label>
+                        <input type="text" class="form-control" id="detailVehiclePlate" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label for="detailVehicleVin" class="form-label">Numer VIN</label>
+                        <input type="text" class="form-control" id="detailVehicleVin" readonly />
+                    </div>
+                    <h5>Dane klienta</h5>
+                    <div class="mb-3">
+                        <label for="detailCustomerPhone" class="form-label">Numer telefonu</label>
+                        <input type="text" class="form-control" id="detailCustomerPhone" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label for="detailCustomerEmail" class="form-label">Adres e-mail</label>
+                        <input type="text" class="form-control" id="detailCustomerEmail" readonly />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                @if (User.IsInRole("Workshop"))
+                {
+                    <button type="button" class="btn btn-danger" id="deleteEventButton">Usuń wizytę</button>
+                    <button type="button" class="btn btn-primary" id="editEventButton">Edytuj wizytę</button>
+                    <button type="button" class="btn btn-success d-none" id="saveEventButton">Zapisz</button>
+                    <button type="button" class="btn btn-secondary d-none" id="cancelEditButton">Anuluj</button>
+                }
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeEventButton">Zamknij</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var workshopId = '@ViewBag.WorkshopId';
+
+            var isWorkshop = '@User.IsInRole("Workshop")'.toLowerCase() === "true";
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'pl',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: '/Workshop/GetEvents?workshopId=' + workshopId,
+                editable: isWorkshop,
+                slotMinTime: "08:00:00", // Domyślna godzina rozpoczęcia
+                slotMaxTime: "18:00:00", // Domyślna godzina zakończenia
+                views: {
+                    timeGridDay: {
+                        titleFormat: { weekday: 'long', day: 'numeric', month: 'long' }
+                    },
+                    timeGridWeek: {
+                        titleFormat: { weekday: 'long', day: 'numeric', month: 'long' }
+                    }
+                },
+                eventClick: function (info) {
+                    if (isWorkshop) {
+                        openDetailsModal(info.event);
+                    } else {
+                        alert("Nie masz uprawnień do zobaczenia szczegółów tego wydarzenia.");
+                    }
+                }
+            });
+
+            calendar.render();
+
+             // Obsługa przycisku "Dodaj nową wizytę"
+             document.getElementById('addEventButton').addEventListener('click', function () {
+                 var modal = new bootstrap.Modal(document.getElementById('addEventModal'));
+                 modal.show();
+             });
+
+            if (isWorkshop){
+             // Obsługa dynamicznej zmiany slotMinTime i slotMaxTime
+            document.getElementById('applySlotTimes').addEventListener('click', function () {
+                var newSlotMinTime = document.getElementById('slotMinTime').value + ":00";
+                var newSlotMaxTime = document.getElementById('slotMaxTime').value + ":00";
+
+                // Walidacja: Sprawdzenie poprawności zakresu czasowego
+                if (newSlotMinTime >= newSlotMaxTime) {
+                    alert("Godzina rozpoczęcia musi być wcześniejsza niż godzina zakończenia.");
+                    return;
+                }
+
+                // Aktualizacja opcji kalendarza
+                calendar.setOption('slotMinTime', newSlotMinTime);
+                calendar.setOption('slotMaxTime', newSlotMaxTime);
+
+                alert("Godziny zostały zaktualizowane: " + newSlotMinTime + " - " + newSlotMaxTime);
+            });
+            }
+
+            // Obsługa zapisu nowego wydarzenia
+            document.getElementById('saveEventModalButton').addEventListener('click', function () {
+                console.log("Przycisk 'Dodaj wizytę' został kliknięty."); // Dodaj ten log
+
+                var newEvent = {
+                    workshopId: document.getElementById('workshopId').value,
+                    title: document.getElementById('eventTitle').value,
+                    start: new Date(document.getElementById('eventDate').value + 'T' + document.getElementById('eventTime').value).toISOString(),
+                    vehicleMake: document.getElementById('vehicleMake')?.value || null,
+                    vehicleModel: document.getElementById('vehicleModel')?.value || null,
+                    vehicleYear: document.getElementById('vehicleYear')?.value || null,
+                    vehiclePlate: document.getElementById('vehiclePlate')?.value || null,
+                    vehicleVin: document.getElementById('vehicleVin')?.value || null,
+                    customerPhone: document.getElementById('customerPhone').value,
+                    customerEmail: document.getElementById('customerEmail').value
+                };
+
+                console.log("Dane nowego wydarzenia:", newEvent); // Loguj dane nowego wydarzenia
+
+                // Minimalna walidacja
+                if (!newEvent.title || !newEvent.start || !newEvent.customerPhone || !newEvent.customerEmail) {
+                    alert("Uzupełnij wszystkie wymagane pola.");
+                    return;
+                }
+
+                fetch('/Workshop/AddEvent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newEvent)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Odpowiedź serwera:", data); // Loguj odpowiedź serwera
+                    if (data.success) {
+                        alert("Wizyta została dodana.");
+                        calendar.refetchEvents();
+                        var modal = bootstrap.Modal.getInstance(document.getElementById('addEventModal'));
+                        modal.hide();
+                    } else {
+                        alert("Błąd: " + data.message);
+                    }
+                })
+                .catch(error => console.error("Błąd:", error));
+            });
+
+
+            function openDetailsModal(event) {
+                var modal = new bootstrap.Modal(document.getElementById('eventDetailsModal'));
+
+                document.getElementById('detailEventTitle').value = event.title;
+                document.getElementById('detailEventDate').value = event.start.toISOString().split('T')[0];
+                document.getElementById('detailEventTime').value = event.start.toISOString().split('T')[1].slice(0, 5);
+                document.getElementById('detailVehicleMake').value = event.extendedProps.vehicleMake || '';
+                document.getElementById('detailVehicleModel').value = event.extendedProps.vehicleModel || '';
+                document.getElementById('detailVehicleYear').value = event.extendedProps.vehicleYear || '';
+                document.getElementById('detailVehiclePlate').value = event.extendedProps.vehiclePlate || '';
+                document.getElementById('detailVehicleVin').value = event.extendedProps.vehicleVin || '';
+                document.getElementById('detailCustomerPhone').value = event.extendedProps.customerPhone || '';
+                document.getElementById('detailCustomerEmail').value = event.extendedProps.customerEmail || '';
+
+                modal.show();
+
+                if (isWorkshop) {
+                    document.getElementById('deleteEventButton').onclick = function () {
+                        if (confirm("Czy na pewno chcesz usunąć tę wizytę?")) {
+                            fetch('/Workshop/DeleteEvent', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id: event.id })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert("Wizyta została usunięta.");
+                                    calendar.refetchEvents();
+                                    modal.hide();
+                                } else {
+                                    alert("Nie udało się usunąć wizyty.");
+                                }
+                            })
+                            .catch(error => console.error("Błąd:", error));
+                        }
+                    };
+
+                    document.getElementById('editEventButton').onclick = function () {
+                        setFieldsEditable(true);
+                        document.getElementById('editEventButton').classList.add('d-none');
+                        document.getElementById('deleteEventButton').classList.add('d-none');
+                        document.getElementById('saveEventButton').classList.remove('d-none');
+                        document.getElementById('cancelEditButton').classList.remove('d-none');
+                    };
+
+                    document.getElementById('saveEventButton').onclick = function () {
+                        var updatedEvent = {
+                            id: event.id,
+                            title: document.getElementById('detailEventTitle').value,
+                            start: new Date(document.getElementById('detailEventDate').value + 'T' + document.getElementById('detailEventTime').value).toISOString(),
+                            vehicleMake: document.getElementById('detailVehicleMake').value,
+                            vehicleModel: document.getElementById('detailVehicleModel').value,
+                            vehicleYear: document.getElementById('detailVehicleYear').value,
+                            vehiclePlate: document.getElementById('detailVehiclePlate').value,
+                            vehicleVin: document.getElementById('detailVehicleVin').value,
+                            customerPhone: document.getElementById('detailCustomerPhone').value,
+                            customerEmail: document.getElementById('detailCustomerEmail').value,
+                        };
+
+                        fetch('/Workshop/UpdateEvent', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(updatedEvent)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert("Wizyta została zaktualizowana.");
+                                calendar.refetchEvents();
+                                modal.hide();
+                            } else {
+                                alert("Nie udało się zaktualizować wizyty.");
+                            }
+                        })
+                        .catch(error => console.error("Błąd:", error));
+                    };
+
+                    document.getElementById('cancelEditButton').onclick = function () {
+                        setFieldsEditable(false);
+                        document.getElementById('editEventButton').classList.remove('d-none');
+                        document.getElementById('deleteEventButton').classList.remove('d-none');
+                        document.getElementById('saveEventButton').classList.add('d-none');
+                        document.getElementById('cancelEditButton').classList.add('d-none');
+                    };
+                }
+            }
+
+            function setFieldsEditable(isEditable) {
+                const fields = document.querySelectorAll('#eventDetailsModal input');
+                fields.forEach(field => {
+                    field.readOnly = !isEditable;
+                });
+            }
+        });
+    </script>
+}

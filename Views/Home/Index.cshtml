@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    var workshops = ViewBag.Workshops as IEnumerable<dynamic>;
+}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Lista Warsztatów</h1>
+    <div class="row">
+        @if (workshops != null && workshops.Any())
+        {
+            foreach (var workshop in workshops)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">@workshop.CompanyName</h5>
+                            <p class="card-text">
+                                <strong>Numer telefonu:</strong> @workshop.PhoneNumber<br />
+                                <strong>Adres:</strong> @workshop.Address<br />
+                                <strong>Usługi:</strong> @workshop.Services
+                            </p>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a asp-controller="Workshop" asp-action="Schedule" asp-route-id="@workshop.Id" class="btn btn-primary">Umów wizytę</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center">
+                <p>Brak warsztatów do wyświetlenia.</p>
+            </div>
+        }
+    </div>
+</div>

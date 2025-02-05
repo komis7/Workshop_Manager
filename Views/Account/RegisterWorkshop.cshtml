@@ -1,0 +1,113 @@
+﻿@model WorkShopManager.Models.RegisterWorkshopViewModel
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header text-center bg-secondary text-white">
+                    <h3>Rejestracja jako Warsztat</h3>
+                </div>
+                <div class="card-body">
+                    <div asp-validation-summary="All" class="alert alert-danger d-none" role="alert"></div>
+
+                    <form asp-action="RegisterWorkshop" method="post" novalidate>
+                        <h5 class="text-secondary">Dane logowania</h5>
+                        <hr />
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Adres e-mail</label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">Hasło</label>
+                            <input asp-for="Password" type="password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ConfirmPassword" class="form-label">Potwierdź hasło</label>
+                            <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <h5 class="text-secondary">Informacje o warsztacie</h5>
+                        <hr />
+                        <div class="mb-3">
+                            <label asp-for="CompanyName" class="form-label">Nazwa firmy</label>
+                            <input asp-for="CompanyName" class="form-control" />
+                            <span asp-validation-for="CompanyName" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label asp-for="Street" class="form-label">Ulica</label>
+                                <input asp-for="Street" class="form-control" />
+                                <span asp-validation-for="Street" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="BuildingNumber" class="form-label">Numer budynku</label>
+                                <input asp-for="BuildingNumber" class="form-control" />
+                                <span asp-validation-for="BuildingNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="PostalCode" class="form-label">Kod pocztowy</label>
+                                <input asp-for="PostalCode" class="form-control" />
+                                <span asp-validation-for="PostalCode" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="City" class="form-label">Miasto</label>
+                                <input asp-for="City" class="form-control" />
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="CompanyNIP" class="form-label">NIP firmy</label>
+                            <input asp-for="CompanyNIP" class="form-control" />
+                            <span asp-validation-for="CompanyNIP" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="PhoneNumber" class="form-label">Numer telefonu</label>
+                            <input asp-for="PhoneNumber" class="form-control" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="WorkshopSlots" class="form-label">Ilość stanowisk warsztatowych</label>
+                            <input asp-for="WorkshopSlots" type="number" class="form-control" min="1" />
+                            <span asp-validation-for="WorkshopSlots" class="text-danger"></span>
+                        </div>
+
+                        <h5 class="text-secondary">Usługi warsztatowe</h5>
+                        <hr />
+                        <div class="mb-3">
+                            <label class="form-label">Wybierz usługi świadczone przez warsztat:</label>
+                            <div class="row">
+                                @foreach (var service in WorkShopManager.Models.RegisterWorkshopViewModel.AvailableServices)
+                                {
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="@service" name="SelectedServices" />
+                                            <label class="form-check-label">@service</label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="HourlyRate" class="form-label">Stawka godzinowa (PLN)</label>
+                            <input asp-for="HourlyRate" type="number" step="0.01" class="form-control" />
+                            <span asp-validation-for="HourlyRate" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-secondary btn-lg">Zarejestruj</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center text-muted">
+                    <small>Masz już konto? <a asp-controller="Account" asp-action="Login" class="text-secondary">Zaloguj się</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

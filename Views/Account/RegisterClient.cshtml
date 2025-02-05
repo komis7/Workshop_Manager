@@ -1,0 +1,90 @@
+﻿@model WorkShopManager.Models.RegisterClientViewModel
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header text-center bg-primary text-white">
+                    <h3>Rejestracja jako Klient</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Walidacja całego modelu -->
+                    <div asp-validation-summary="All" class="alert alert-danger d-none" id="validationSummary" role="alert"></div>
+
+                    <form asp-action="RegisterClient" method="post" novalidate>
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Adres e-mail</label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">Hasło</label>
+                            <input asp-for="Password" type="password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ConfirmPassword" class="form-label">Potwierdź hasło</label>
+                            <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <hr />
+
+                        <h5 class="text-primary">Dane kontaktowe</h5>
+
+                        <div class="mb-3">
+                            <label asp-for="PhoneNumber" class="form-label">Numer telefonu</label>
+                            <input asp-for="PhoneNumber" class="form-control" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <hr />
+
+                        <h5 class="text-primary">Dane pojazdu</h5>
+
+                        <div class="mb-3">
+                            <label asp-for="VehicleBrand" class="form-label">Marka pojazdu</label>
+                            <input asp-for="VehicleBrand" class="form-control" />
+                            <span asp-validation-for="VehicleBrand" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="VehicleModel" class="form-label">Model pojazdu</label>
+                            <input asp-for="VehicleModel" class="form-control" />
+                            <span asp-validation-for="VehicleModel" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="VehicleYear" class="form-label">Rok produkcji</label>
+                            <input asp-for="VehicleYear" type="number" class="form-control" />
+                            <span asp-validation-for="VehicleYear" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="VehicleRegistrationNumber" class="form-label">Numer rejestracyjny</label>
+                            <input asp-for="VehicleRegistrationNumber" class="form-control" />
+                            <span asp-validation-for="VehicleRegistrationNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="VehicleVIN" class="form-label">Numer VIN</label>
+                            <input asp-for="VehicleVIN" class="form-control" />
+                            <span asp-validation-for="VehicleVIN" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Zarejestruj</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center text-muted">
+                    <small>Masz już konto? <a asp-controller="Account" asp-action="Login" class="text-primary">Zaloguj się</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
