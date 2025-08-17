@@ -8,7 +8,6 @@
                     <h3>Rejestracja jako Klient</h3>
                 </div>
                 <div class="card-body">
-                    <!-- Walidacja całego modelu -->
                     <div asp-validation-summary="All" class="alert alert-danger d-none" id="validationSummary" role="alert"></div>
 
                     <form asp-action="RegisterClient" method="post" novalidate>
@@ -45,15 +44,19 @@
                         <h5 class="text-primary">Dane pojazdu</h5>
 
                         <div class="mb-3">
-                            <label asp-for="VehicleBrand" class="form-label">Marka pojazdu</label>
-                            <input asp-for="VehicleBrand" class="form-control" />
-                            <span asp-validation-for="VehicleBrand" class="text-danger"></span>
+                            <label class="form-label">Marka pojazdu</label>
+                            <select asp-for="SelectedMakeId" class="form-control" id="makeDropdown" asp-items="@(new SelectList(Model.Makes, "Id", "Name"))">
+                                <option value="">-- wybierz markę --</option>
+                            </select>
+                            <span asp-validation-for="SelectedMakeId" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="VehicleModel" class="form-label">Model pojazdu</label>
-                            <input asp-for="VehicleModel" class="form-control" />
-                            <span asp-validation-for="VehicleModel" class="text-danger"></span>
+                            <label class="form-label">Model pojazdu</label>
+                            <select asp-for="SelectedModelId" class="form-control" id="modelDropdown">
+                                <option value="">-- wybierz model --</option>
+                            </select>
+                            <span asp-validation-for="SelectedModelId" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
@@ -87,4 +90,25 @@
     </div>
 </div>
 
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#makeDropdown').change(function () {
+                var makeId = $(this).val();
+                $('#modelDropdown').empty().append('<option>Ładowanie modeli...</option>');
 
+                if (makeId) {
+                    $.get('/Account/GetModelsByMake', { makeId: makeId }, function (data) {
+                        $('#modelDropdown').empty();
+                        $('#modelDropdown').append('<option value="">-- wybierz model --</option>');
+                        $.each(data, function (index, model) {
+                            $('#modelDropdown').append('<option value="' + model.id + '">' + model.name + '</option>');
+                        });
+                    });
+                } else {
+                    $('#modelDropdown').empty().append('<option>-- wybierz markę najpierw --</option>');
+                }
+            });
+        });
+    </script>
+}

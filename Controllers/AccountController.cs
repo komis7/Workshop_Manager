@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WorkShopManager.Models;
+using Microsoft.EntityFrameworkCore;
+using WorkShopManager.Data;
 
 namespace CarWorkshopAppointments.Controllers
 {
@@ -9,11 +12,13 @@ namespace CarWorkshopAppointments.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly WorkshopContext _context;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, WorkshopContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
 
         public IActionResult Register()
@@ -49,12 +54,15 @@ namespace CarWorkshopAppointments.Controllers
             return View(model);
         }
 
+        [HttpGet]
         public IActionResult Login()
         {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
-
-
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -68,8 +76,6 @@ namespace CarWorkshopAppointments.Controllers
                     if (user != null)
                     {
                         var roles = await _userManager.GetRolesAsync(user);
-                        Console.WriteLine($"Rola użytkownika: {string.Join(", ", roles)}");
-
                         if (roles.Contains("Client"))
                         {
                             return RedirectToAction("Dashboard", "Client");
@@ -89,7 +95,14 @@ namespace CarWorkshopAppointments.Controllers
 
         public async Task<IActionResult> Logout()
         {
+            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
             await _signInManager.SignOutAsync();
+
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -100,30 +113,34 @@ namespace CarWorkshopAppointments.Controllers
 
         public IActionResult RegisterClient()
         {
-            return View();
+            var model = new RegisterClientViewModel
+            {
+                Makes = _context.CarMakes.OrderBy(m => m.Name).ToList()
+            };
+            return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> RegisterClient(RegisterClientViewModel model)
-            {
+        {
             if (ModelState.IsValid)
             {
+                var selectedMake = await _context.CarMakes.FindAsync(model.SelectedMakeId);
+                var selectedModel = await _context.CarModels.FindAsync(model.SelectedModelId);
+
                 var user = new ApplicationUser
                 {
                     UserName = model.Email,
                     Email = model.Email,
                     PhoneNumber = model.PhoneNumber,
-                    VehicleDetails = $"{model.VehicleBrand}, {model.VehicleModel},{model.VehicleYear}, {model.VehicleRegistrationNumber}, {model.VehicleVIN}"
+                    VehicleDetails = $"{selectedMake?.Name}, {selectedModel?.Name}, {model.VehicleYear}, {model.VehicleRegistrationNumber}, {model.VehicleVIN}"
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    // Przypisanie roli "Client" nowo zarejestrowanemu użytkownikowi
                     await _userManager.AddToRoleAsync(user, "Client");
-
                     await _signInManager.SignInAsync(user, isPersistent: false);
-
                     return RedirectToAction("Dashboard", "Client");
                 }
 
@@ -132,8 +149,11 @@ namespace CarWorkshopAppointments.Controllers
                     ModelState.AddModelError("", error.Description);
                 }
             }
+
+            model.Makes = _context.CarMakes.OrderBy(m => m.Name).ToList();
             return View(model);
         }
+
         public IActionResult RegisterWorkshop()
         {
             return View();
@@ -195,11 +215,19 @@ namespace CarWorkshopAppointments.Controllers
                 return RedirectToAction("Dashboard", "Client");
             }
 
-            // Domyślne przekierowanie (jeśli rola nie jest rozpoznana)
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
+        public JsonResult GetModelsByMake(int makeId)
+        {
+            var models = _context.CarModels
+                .Where(m => m.CarMakeId == makeId)
+                .OrderBy(m => m.Name)
+                .Select(m => new { m.Id, m.Name })
+                .ToList();
+
+            return Json(models);
+        }
     }
-
 }
-

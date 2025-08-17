@@ -5,35 +5,40 @@ namespace WorkShopManager.Models
 {
     public class RegisterClientViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Adres e-mail jest wymagany.")]
         [EmailValidation]
         public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Hasło jest wymagane.")]
         [DataType(DataType.Password)]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$",
             ErrorMessage = "Hasło musi mieć co najmniej 8 znaków, zawierać wielką i małą literę, cyfrę oraz znak specjalny.")]
         public string Password { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Powtórzenie hasła jest wymagane.")]
         [Compare("Password", ErrorMessage = "Hasła muszą być identyczne.")]
         public string ConfirmPassword { get; set; }
 
-        [Required]
-        [RegularExpression(@"^\d{9}$", ErrorMessage = "Numer telefonu musi zawierać dokładnie 9 cyfr.")]
+        [Required(ErrorMessage = "Podanie numeru telefonu jest wymagane.")]
+        [RegularExpression(@"^\d{9}$", ErrorMessage = "Numer telefonu musi posiadać dokładnie 9 cyfr.")]
         public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Marka pojazdu jest wymagana.")]
-        public string VehicleBrand { get; set; }
+        //public string VehicleBrand { get; set; }
+        public int SelectedMakeId { get; set; }
 
         [Required(ErrorMessage = "Model pojazdu jest wymagany.")]
-        public string VehicleModel { get; set; }
+        //public string VehicleModel { get; set; }
+        public int SelectedModelId { get; set; }
+
+        public List<CarMake>? Makes { get; set; }
+        public List<CarModel>? Models { get; set; }
 
         [Required]
         [RegularExpression(@"^\d{4}$", ErrorMessage = "Rok produkcji musi mieć 4 cyfry.")]
         public string VehicleYear { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Podanie numeru rejestracyjnego pojazdu jest wymagane.")]
         [StringLength(8, MinimumLength = 5, ErrorMessage = "Numer rejestracyjny musi mieć od 5 do 8 znaków.")]
         public string VehicleRegistrationNumber { get; set; }
 

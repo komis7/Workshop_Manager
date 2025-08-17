@@ -7,7 +7,7 @@ using WorkShopManager.Models;
 
 namespace WorkShopManager.Controllers
 {
-    [Authorize(Roles = "Workshop")] // Wymaga zalogowania
+    [Authorize(Roles = "Workshop")]
     public class WorkshopController : Controller
     {
         private readonly WorkshopContext _context;
@@ -62,7 +62,6 @@ namespace WorkShopManager.Controllers
                 return BadRequest(new { success = false, message = "Identyfikator warsztatu jest wymagany." });
             }
 
-            // Automatyczne przypisanie warsztatu do wizyty
             var workshop = await _context.Users.FirstOrDefaultAsync(u => u.Id == newEvent.WorkshopId);
             if (workshop == null)
             {
@@ -102,7 +101,6 @@ namespace WorkShopManager.Controllers
                 return NotFound(new { success = false, message = "Wizyta nie została znaleziona." });
             }
 
-            // Aktualizacja danych wydarzenia
             eventInDb.Title = updatedEvent.Title;
             eventInDb.Start = updatedEvent.Start;
             eventInDb.VehicleMake = updatedEvent.VehicleMake;
@@ -136,7 +134,6 @@ namespace WorkShopManager.Controllers
             ViewBag.WorkshopName = workshop.CompanyName;
             ViewBag.WorkshopId = workshop.Id;
 
-            // Jeśli użytkownik jest zalogowany, pobierz dane klienta
             if (User.Identity.IsAuthenticated)
             {
                 var user = await _userManager.GetUserAsync(User);

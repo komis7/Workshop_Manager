@@ -23,7 +23,7 @@ namespace WorkShopManager.Controllers
             {
                 var user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
                 var roles = _context.UserRoles.Where(ur => ur.UserId == user.Id).Select(ur => ur.RoleId).ToList();
-                var workshopRoleId = "237c99e9-e9d0-4c0e-85c2-75b9b3a3de4a"; // Rola warsztatu
+                var workshopRoleId = "0c8cf7fd-db13-41f4-86d0-1ae514a6b1ac"; // Rola warsztatu
 
                 if (roles.Contains(workshopRoleId))
                 {
@@ -33,7 +33,7 @@ namespace WorkShopManager.Controllers
             }
 
             var workshops = _context.Users
-                .Where(u => _context.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == "237c99e9-e9d0-4c0e-85c2-75b9b3a3de4a"))
+                .Where(u => _context.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == "0c8cf7fd-db13-41f4-86d0-1ae514a6b1ac"))
                 .Select(w => new
                 {
                     w.Id,

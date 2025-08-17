@@ -101,5 +101,16 @@ namespace WorkShopManager.Controllers
             }
             return View(model);
         }
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index"); // lub inna strona po zalogowaniu
+            }
+
+            return View();
+        }
     }
 }
