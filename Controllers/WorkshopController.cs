@@ -39,7 +39,8 @@ namespace WorkShopManager.Controllers
                 {
                     e.Id,
                     e.Title,
-                    e.Start,
+                    Start = e.Start,
+                    End = e.Start.AddHours(1),
                     VehicleMake = User.IsInRole("Workshop") ? e.VehicleMake : null,
                     VehicleModel = User.IsInRole("Workshop") ? e.VehicleModel : null,
                     VehicleYear = User.IsInRole("Workshop") ? (int?)e.VehicleYear : null,
@@ -66,6 +67,13 @@ namespace WorkShopManager.Controllers
             if (workshop == null)
             {
                 return NotFound(new { success = false, message = "Nie znaleziono warsztatu." });
+            }
+            var year = newEvent.VehicleYear;
+            if (year != 0)
+            {
+                var maxYear = DateTime.Now.Year;
+                if (year < 1950 || year > maxYear)
+                    return BadRequest(new { success = false, message = $"Nieprawidłowy rok produkcji." });
             }
 
             _context.Events.Add(newEvent);
@@ -133,6 +141,7 @@ namespace WorkShopManager.Controllers
 
             ViewBag.WorkshopName = workshop.CompanyName;
             ViewBag.WorkshopId = workshop.Id;
+            ViewBag.WorkshopServices = workshop.Services ?? "";
 
             if (User.Identity.IsAuthenticated)
             {

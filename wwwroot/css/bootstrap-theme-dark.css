@@ -1,0 +1,185 @@
+﻿[data-bs-theme="dark"] {
+    --bs-body-bg: #1b1d21;
+    --bs-body-color: #e0e0e0;
+    --bs-card-bg: #25272c;
+    --bs-card-border-color: #2f3238;
+    --bs-border-color: #2f3238;
+    --bs-primary: #e26a00;
+    --bs-primary-rgb: 226, 106, 0;
+    --bs-secondary: #b0b3b8;
+    --bs-link-color: #e26a00;
+    --bs-link-hover-color: #ff9933;
+    --bs-btn-border-radius: 0.5rem;
+    --bs-btn-font-weight: 500;
+}
+
+body {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+}
+
+.card {
+    background-color: var(--bs-card-bg);
+    border: 1px solid var(--bs-card-border-color);
+    color: var(--bs-body-color);
+}
+
+.card-title {
+    color: var(--bs-primary);
+}
+
+.card-footer {
+    background: transparent;
+}
+
+.btn-outline-primary {
+    border-color: var(--bs-primary);
+    color: var(--bs-primary);
+}
+
+    .btn-outline-primary:hover {
+        background-color: var(--bs-primary);
+        color: #fff;
+    }
+
+.input-group-text, .form-select, .form-control {
+    background-color: #2a2d32;
+    color: #e0e0e0;
+    border-color: #3b3f45;
+}
+
+    .input-group-text i {
+        color: var(--bs-primary);
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--bs-primary);
+        box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+    }
+
+.hover-elevate:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 .75rem 1.25rem rgba(0, 0, 0, .4);
+}
+
+.badge.text-bg-light {
+    background-color: #32353a;
+    color: #cfcfcf;
+    border: 1px solid #3f4247;
+}
+
+a {
+    color: var(--bs-link-color);
+    text-decoration: none;
+}
+
+    a:hover {
+        color: var(--bs-link-hover-color);
+        text-decoration: underline;
+    }
+
+[data-bs-theme="dark"] body {
+    background: linear-gradient( 135deg, #000000 0%, #1a1b1f 40%, #2b2d31 100% );
+    background-attachment: fixed;
+}
+
+[data-bs-theme="dark"] .btn-outline-primary {
+    border-color: var(--bs-primary);
+    color: var(--bs-primary);
+    transition: all .2s ease-in-out;
+}
+
+    [data-bs-theme="dark"] .btn-outline-primary:hover {
+        background-color: var(--bs-primary);
+        color: #fff;
+        border-color: var(--bs-primary);
+    }
+
+[data-bs-theme="dark"] .btn-primary,
+[data-bs-theme="dark"] .btn-outline-primary {
+    background: linear-gradient(135deg, #d96400 0%, #e26a00 50%, #f07d18 100%);
+    border: 1px solid #e26a00;
+    color: #fff;
+    font-weight: 500;
+    transition: all .25s ease-in-out;
+}
+
+    [data-bs-theme="dark"] .btn-primary:hover,
+    [data-bs-theme="dark"] .btn-outline-primary:hover {
+        background: linear-gradient(135deg, #f07d18 0%, #ff8c26 50%, #ffa84a 100%);
+        border-color: #ff9933;
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 0.25rem 0.6rem rgba(255, 150, 50, 0.25);
+    }
+
+    [data-bs-theme="dark"] .btn-primary:active,
+    [data-bs-theme="dark"] .btn-outline-primary:active {
+        background: linear-gradient(135deg, #b35600 0%, #cc5c00 60%, #e26a00 100%);
+        border-color: #b35600;
+        box-shadow: inset 0 0.1rem 0.3rem rgba(0, 0, 0, 0.4);
+        transform: translateY(0);
+    }
+
+/* Select2: dopasowanie do ciemnego modalu (Bootstrap 5 dark) */
+.select2-container--default .select2-selection--single {
+    background-color: #212529 !important; /* jak dark input */
+    border: 1px solid #495057 !important;
+    border-radius: .375rem !important;
+    height: calc(2.25rem + 2px) !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #f8f9fa !important;
+        line-height: 2.25rem !important;
+        padding-left: .75rem !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__placeholder {
+        color: #adb5bd !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow b {
+        border-color: #f8f9fa transparent transparent transparent !important;
+    }
+
+.select2-container--default .select2-dropdown {
+    background-color: #212529 !important;
+    border: 1px solid #495057 !important;
+}
+
+.select2-container--default .select2-results__option {
+    color: #f8f9fa !important;
+}
+
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: #0d6efd !important; /* bootstrap primary */
+    color: #fff !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    background-color: #212529 !important;
+    color: #f8f9fa !important;
+    border: 1px solid #495057 !important;
+    border-radius: .375rem !important;
+}
+
+/* disabled */
+.select2-container--default.select2-container--disabled .select2-selection--single {
+    background-color: #343a40 !important;
+    opacity: .7;
+}
+
+/* żeby select2 rozciągał się jak form-select */
+.select2-container {
+    width: 100% !important;
+}
+
+
+
+
+
+
+

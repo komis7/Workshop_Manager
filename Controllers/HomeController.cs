@@ -23,7 +23,7 @@ namespace WorkShopManager.Controllers
             {
                 var user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
                 var roles = _context.UserRoles.Where(ur => ur.UserId == user.Id).Select(ur => ur.RoleId).ToList();
-                var workshopRoleId = "0c8cf7fd-db13-41f4-86d0-1ae514a6b1ac"; // Rola warsztatu
+                var workshopRoleId = "3bd7d0c5-f004-4ee2-9ea9-b49ce540e67b"; // Rola warsztatu
 
                 if (roles.Contains(workshopRoleId))
                 {
@@ -33,18 +33,17 @@ namespace WorkShopManager.Controllers
             }
 
             var workshops = _context.Users
-                .Where(u => _context.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == "0c8cf7fd-db13-41f4-86d0-1ae514a6b1ac"))
+                .Where(u => _context.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == "3bd7d0c5-f004-4ee2-9ea9-b49ce540e67b"))
                 .Select(w => new
                 {
                     w.Id,
-                    w.CompanyName, // Nazwa u¿ytkownika (mo¿e to byæ e-mail)
-                    w.PhoneNumber, // Numer telefonu
-                    Address = $"{w.Street} {w.BuildingNumber}, {w.PostalCode} {w.City}", // Adres
-                    Services = w.Services // Us³ugi oferowane przez warsztat
+                    w.CompanyName,
+                    w.PhoneNumber,
+                    Address = $"{w.Street} {w.BuildingNumber}, {w.PostalCode} {w.City}",
+                    Services = w.Services
                 })
                 .ToList();
 
-            // Przekazujemy dane do widoku
             ViewBag.Workshops = workshops;
 
             return View();

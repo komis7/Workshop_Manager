@@ -229,5 +229,16 @@ namespace CarWorkshopAppointments.Controllers
 
             return Json(models);
         }
+
+        [HttpGet]
+        public JsonResult GetMakes()
+        {
+            var makes = _context.CarMakes
+                .Select(m => new { id = m.Id, name = m.Name })
+                .ToList();
+
+            return Json(makes);
+        }
+
     }
 }

@@ -3,16 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|c:\\users\\komis\\desktop\\workshopmanager_good\\models\\registerclientviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|solutionrelative:models\\registerclientviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|c:\\users\\komis\\desktop\\workshopmanager_good\\views\\workshop\\schedule.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|solutionrelative:views\\workshop\\schedule.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|c:\\users\\komis\\desktop\\workshopmanager_good\\views\\account\\registerclient.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|solutionrelative:views\\account\\registerclient.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|c:\\users\\komis\\desktop\\workshopmanager_good\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|solutionrelative:controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|c:\\users\\komis\\desktop\\workshopmanager_good\\controllers\\workshopcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|solutionrelative:controllers\\workshopcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -35,38 +31,26 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "RegisterClient.cshtml",
-              "DocumentMoniker": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Views\\Account\\RegisterClient.cshtml",
-              "RelativeDocumentMoniker": "Views\\Account\\RegisterClient.cshtml",
-              "ToolTip": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Views\\Account\\RegisterClient.cshtml",
-              "RelativeToolTip": "Views\\Account\\RegisterClient.cshtml",
-              "ViewState": "AgIAAFEAAAAAAAAAAAAwwHIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-08-17T18:00:06.181Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "AccountController.cs",
-              "DocumentMoniker": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Controllers\\AccountController.cs",
-              "RelativeDocumentMoniker": "Controllers\\AccountController.cs",
-              "ToolTip": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Controllers\\AccountController.cs",
-              "RelativeToolTip": "Controllers\\AccountController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAOkAAAAAAAAAAAAAAA==",
+              "Title": "WorkshopController.cs",
+              "DocumentMoniker": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Controllers\\WorkshopController.cs",
+              "RelativeDocumentMoniker": "Controllers\\WorkshopController.cs",
+              "ToolTip": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Controllers\\WorkshopController.cs",
+              "RelativeToolTip": "Controllers\\WorkshopController.cs",
+              "ViewState": "AgIAAIsAAAAAAAAAAAAmwI8AAAA/AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-17T17:53:00.921Z"
+              "WhenOpened": "2026-01-19T17:09:46.821Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "RegisterClientViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Models\\RegisterClientViewModel.cs",
-              "RelativeDocumentMoniker": "Models\\RegisterClientViewModel.cs",
-              "ToolTip": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Models\\RegisterClientViewModel.cs",
-              "RelativeToolTip": "Models\\RegisterClientViewModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAAzAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-17T17:51:09.64Z",
+              "Title": "Schedule.cshtml",
+              "DocumentMoniker": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Views\\Workshop\\Schedule.cshtml",
+              "RelativeDocumentMoniker": "Views\\Workshop\\Schedule.cshtml",
+              "ToolTip": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Views\\Workshop\\Schedule.cshtml",
+              "RelativeToolTip": "Views\\Workshop\\Schedule.cshtml",
+              "ViewState": "AgIAAPQAAAAAAAAAAAAIwAMBAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-29T15:51:47.219Z",
               "EditorCaption": ""
             }
           ]

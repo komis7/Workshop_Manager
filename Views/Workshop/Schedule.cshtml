@@ -1,47 +1,43 @@
-﻿@section Styles {
-    <style>
-        #calendar {
-            max-width: 900px;
-            margin: 40px auto;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-            border-radius: 4px;
-            padding: 10px 15px;
-            font-size: 1rem;
-        }
-
-            .btn-primary:hover {
-                background-color: #0056b3;
-            }
-
-        .modal-content {
-            border-radius: 8px;
-        }
-
-        .modal-header {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .modal-footer {
-            border-top: none;
-        }
-    </style>
-}
+﻿@using System.Text.Json
 
 <h1>Harmonogram Warsztatu</h1>
 
 <button id="addEventButton" class="btn btn-primary">Dodaj nową wizytę</button>
 
 <div id="calendar"></div>
+
+<style>
+    #calendar .fc {
+        outline: 3px solid magenta !important;
+    }
+
+        #calendar .fc .fc-scrollgrid,
+        #calendar .fc .fc-scrollgrid * {
+            background-color: #25272c !important;
+            border-color: #2f3238 !important;
+        }
+
+        #calendar .fc .fc-timegrid,
+        #calendar .fc .fc-timegrid-body,
+        #calendar .fc .fc-timegrid-col,
+        #calendar .fc .fc-timegrid-col-frame,
+        #calendar .fc .fc-timegrid-slots {
+            background-color: #25272c !important;
+        }
+
+        #calendar .fc .fc-daygrid,
+        #calendar .fc .fc-daygrid-body,
+        #calendar .fc .fc-daygrid-day,
+        #calendar .fc .fc-daygrid-day-bg,
+        #calendar .fc .fc-daygrid-day-frame {
+            background-color: #25272c !important;
+        }
+
+        #calendar .fc .fc-timegrid-slot-minor {
+            border-top-style: solid !important;
+            border-top-color: #2f3238 !important;
+        }
+</style>
 
 @if (User.IsInRole("Workshop"))
 {
@@ -56,7 +52,6 @@
     </div>
 }
 
-
 <!-- Modal do dodawania wydarzenia -->
 <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -68,31 +63,81 @@
             <div class="modal-body">
                 <form id="addEventForm">
                     <input type="hidden" id="workshopId" value="@ViewBag.WorkshopId" />
+
+                    <!-- ✅ ZMIANA: Title = usługa warsztatu -->
                     <div class="mb-3">
-                        <label for="eventTitle" class="form-label">Nazwa wydarzenia</label>
-                        <input type="text" class="form-control" id="eventTitle" required />
+                        <label for="eventTitle" class="form-label">Usługa</label>
+                        <select class="form-select" id="eventTitle" required>
+                            <option value="">-- wybierz usługę --</option>
+                        </select>
                     </div>
+
                     <div class="mb-3">
                         <label for="eventDate" class="form-label">Data</label>
                         <input type="date" class="form-control" id="eventDate" required />
                     </div>
+
+                    <!-- ✅ pełne godziny -->
                     <div class="mb-3">
                         <label for="eventTime" class="form-label">Godzina</label>
-                        <input type="time" class="form-control" id="eventTime" required />
+                        <select class="form-select" id="eventTime" required>
+                            <option value="">-- wybierz godzinę --</option>
+                        </select>
                     </div>
+
                     <h5>Dane pojazdu</h5>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Client"))
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">Marka</label>
+                            <input type="text" class="form-control" id="clientVehicleMake" value="@ViewBag.VehicleMake" readonly />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Model</label>
+                            <input type="text" class="form-control" id="clientVehicleModel" value="@ViewBag.VehicleModel" readonly />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mb-3">
+                            <label for="vehicleMakeDropdown" class="form-label">Marka</label>
+                            <select class="form-select" id="vehicleMakeDropdown">
+                                <option value="">-- wybierz markę --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="vehicleModelDropdown" class="form-label">Model</label>
+                            <select class="form-select" id="vehicleModelDropdown" disabled>
+                                <option value="">Najpierw wybierz markę</option>
+                            </select>
+                        </div>
+                    }
+
                     <div class="mb-3">
-                        <label for="vehicleMake" class="form-label">Marka</label>
-                        <input type="text" class="form-control" id="vehicleMake" value="@ViewBag.VehicleMake" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="vehicleModel" class="form-label">Model</label>
-                        <input type="text" class="form-control" id="vehicleModel" value="@ViewBag.VehicleModel" />
-                    </div>
-                    <div class="mb-3">
+                        @{
+                            var rawYearObj = ViewBag.VehicleYear;
+                            var rawYear = rawYearObj == null ? "" : rawYearObj.ToString().Trim();
+                            int y;
+                            var cleanYear = int.TryParse(rawYear, out y) ? y.ToString() : "";
+                        }
+
                         <label for="vehicleYear" class="form-label">Rok produkcji</label>
-                        <input type="number" class="form-control" id="vehicleYear" value="@ViewBag.VehicleYear" />
+                        <input type="number"
+                               class="form-control"
+                               id="vehicleYear"
+                               name="VehicleYear"
+                               value="@cleanYear"
+                               data-year="@rawYear"
+                               min="1950"
+                               max="@DateTime.Now.Year + 1"
+                               placeholder="np. 2018" />
+                        <div class="invalid-feedback">
+                            Podaj poprawny rok produkcji pojazdu.
+                        </div>
                     </div>
+
                     <div class="mb-3">
                         <label for="vehiclePlate" class="form-label">Numer rejestracyjny</label>
                         <input type="text" class="form-control" id="vehiclePlate" value="@ViewBag.VehiclePlate" />
@@ -101,6 +146,7 @@
                         <label for="vehicleVin" class="form-label">Numer VIN</label>
                         <input type="text" class="form-control" id="vehicleVin" value="@ViewBag.VehicleVin" />
                     </div>
+
                     <h5>Dane klienta</h5>
                     <div class="mb-3">
                         <label for="customerPhone" class="form-label">Numer telefonu</label>
@@ -130,18 +176,26 @@
             </div>
             <div class="modal-body">
                 <form>
+                    <!-- ✅ ZMIANA: Title = usługa (select) -->
                     <div class="mb-3">
-                        <label for="detailEventTitle" class="form-label">Nazwa wydarzenia</label>
-                        <input type="text" class="form-control" id="detailEventTitle" readonly />
+                        <label for="detailEventTitle" class="form-label">Usługa</label>
+                        <select class="form-select" id="detailEventTitle" disabled>
+                            <option value="">-- wybierz usługę --</option>
+                        </select>
                     </div>
+
                     <div class="mb-3">
                         <label for="detailEventDate" class="form-label">Data</label>
                         <input type="date" class="form-control" id="detailEventDate" readonly />
                     </div>
+
                     <div class="mb-3">
                         <label for="detailEventTime" class="form-label">Godzina</label>
-                        <input type="time" class="form-control" id="detailEventTime" readonly />
+                        <select class="form-select" id="detailEventTime" disabled>
+                            <option value="">-- wybierz godzinę --</option>
+                        </select>
                     </div>
+
                     <h5>Dane pojazdu</h5>
                     <div class="mb-3">
                         <label for="detailVehicleMake" class="form-label">Marka</label>
@@ -191,31 +245,188 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+
             var calendarEl = document.getElementById('calendar');
             var workshopId = '@ViewBag.WorkshopId';
-
             var isWorkshop = '@User.IsInRole("Workshop")'.toLowerCase() === "true";
+            var isClient = '@User.IsInRole("Client")'.toLowerCase() === "true";
+
+            // ✅ Usługi warsztatu przekazane z kontrolera: ViewBag.WorkshopServices = workshop.Services
+            function getServices() {
+                const raw = @Html.Raw(JsonSerializer.Serialize((ViewBag.WorkshopServices ?? "").ToString()));
+                return raw.split(',')
+                .map(s => s.trim())
+                .filter(s => s.length > 0);
+            }
+
+            function fillServiceSelect(selectEl, selectedValue) {
+                if (!selectEl) return;
+                const services = getServices();
+
+                selectEl.innerHTML = '<option value="">-- wybierz usługę --</option>';
+
+                if (services.length === 0) {
+                    const opt = document.createElement('option');
+                    opt.value = "";
+                    opt.textContent = "Brak zdefiniowanych usług";
+                    selectEl.appendChild(opt);
+                    return;
+                }
+
+                for (const s of services) {
+                    const opt = document.createElement('option');
+                    opt.value = s;
+                    opt.textContent = s;
+                    selectEl.appendChild(opt);
+                }
+
+                if (selectedValue) selectEl.value = selectedValue;
+            }
+
+            // ---------- HELPERY CZASU + ZAJĘTOŚCI (pełne godziny) ----------
+            function hmToMinutes(hm) {
+                const [h, m] = hm.split(':').map(Number);
+                return h * 60 + m;
+            }
+            function minutesToHm(mins) {
+                const h = String(Math.floor(mins / 60)).padStart(2, '0');
+                const m = String(mins % 60).padStart(2, '0');
+                return `${h}:${m}`;
+            }
+            function localYmd(d) {
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${y}-${m}-${day}`;
+            }
+            function getWorkHours() {
+                const min = document.getElementById('slotMinTime')?.value || '08:00';
+                const max = document.getElementById('slotMaxTime')?.value || '18:00';
+                return { min, max };
+            }
+
+            async function fetchAllEventsRaw() {
+                const res = await fetch(`/Workshop/GetEvents?workshopId=${workshopId}`);
+                return await res.json();
+            }
+
+            async function getBusyTimesSet(ymd, excludeEventId) {
+                const data = await fetchAllEventsRaw();
+                const busy = new Set();
+
+                for (const e of data) {
+                    if (excludeEventId && String(e.id) === String(excludeEventId)) continue;
+
+                    const d = new Date(e.start);
+                    if (localYmd(d) !== ymd) continue;
+
+                    const hh = String(d.getHours()).padStart(2, '0');
+                    const mm = String(d.getMinutes()).padStart(2, '0');
+                    busy.add(`${hh}:${mm}`);
+                }
+                return busy;
+            }
+
+            async function fillFullHourSelect(selectEl, ymd, excludeEventId, preferredValue) {
+                if (!selectEl) return;
+
+                const { min, max } = getWorkHours();
+                const startMin = hmToMinutes(min);
+                const endMin = hmToMinutes(max);
+
+                let slots = [];
+                for (let t = startMin; t < endMin; t += 60) {
+                    slots.push(minutesToHm(t));
+                }
+
+                const now = new Date();
+                const today = localYmd(now);
+                if (ymd === today) {
+                    const cutoffHour = (now.getMinutes() === 0) ? now.getHours() : now.getHours() + 1;
+                    const cutoff = `${String(cutoffHour).padStart(2, '0')}:00`;
+                    slots = slots.filter(s => s >= cutoff);
+                }
+
+                const busy = await getBusyTimesSet(ymd, excludeEventId);
+                let free = slots.filter(s => !busy.has(s));
+
+                if (preferredValue && preferredValue.length === 5 && !free.includes(preferredValue)) {
+                    free.push(preferredValue);
+                    free.sort();
+                }
+
+                selectEl.innerHTML = '<option value="">-- wybierz godzinę --</option>';
+
+                if (free.length === 0) {
+                    const opt = document.createElement('option');
+                    opt.value = "";
+                    opt.textContent = "Brak wolnych godzin";
+                    selectEl.appendChild(opt);
+                    return;
+                }
+
+                for (const t of free) {
+                    const opt = document.createElement('option');
+                    opt.value = t;
+                    opt.textContent = t;
+                    selectEl.appendChild(opt);
+                }
+
+                if (preferredValue) selectEl.value = preferredValue;
+            }
+            // -------------------------------------------------------------
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
+                themeSystem: 'bootstrap5',
+                initialView: 'timeGridWeek',
+                height: 'auto',
+                expandRows: true,
                 locale: 'pl',
+                firstDay: 1,
+                hiddenDays: [0],
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
+                buttonText: {
+                    dayGridMonth: 'Miesiąc',
+                    timeGridWeek: 'Tydzień',
+                    timeGridDay: 'Dzień'
+                },
                 events: '/Workshop/GetEvents?workshopId=' + workshopId,
                 editable: isWorkshop,
-                slotMinTime: "08:00:00", // Domyślna godzina rozpoczęcia
-                slotMaxTime: "18:00:00", // Domyślna godzina zakończenia
+                slotMinTime: "08:00:00",
+                slotMaxTime: "18:00:00",
+                defaultTimedEventDuration: '01:00:00',
+                forceEventDuration: true,
+                eventDurationEditable: false,
+                slotDuration: '01:00:00',
+                slotLabelInterval: '01:00:00',
+                snapDuration: '01:00:00',
+                slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+                allDaySlot: false,
+
                 views: {
-                    timeGridDay: {
-                        titleFormat: { weekday: 'long', day: 'numeric', month: 'long' }
-                    },
-                    timeGridWeek: {
-                        titleFormat: { weekday: 'long', day: 'numeric', month: 'long' }
-                    }
+                    timeGridWeek: { allDaySlot: false, firstDay: 1 },
+                    timeGridDay: { allDaySlot: false },
+                    dayGridMonth: { firstDay: 1 }
                 },
+
+                eventDidMount: function (info) {
+                    const tipText = `
+                        <b>${info.event.title}</b><br>
+                        ${info.event.extendedProps.vehicleMake || ''} ${info.event.extendedProps.vehicleModel || ''}<br>
+                        ${info.event.extendedProps.customerEmail || ''}
+                    `;
+                    new bootstrap.Tooltip(info.el, {
+                        title: tipText,
+                        html: true,
+                        placement: 'top',
+                        container: 'body'
+                    });
+                },
+
                 eventClick: function (info) {
                     if (isWorkshop) {
                         openDetailsModal(info.event);
@@ -227,42 +438,161 @@
 
             calendar.render();
 
-             // Obsługa przycisku "Dodaj nową wizytę"
-             document.getElementById('addEventButton').addEventListener('click', function () {
-                 var modal = new bootstrap.Modal(document.getElementById('addEventModal'));
-                 modal.show();
-             });
+            // ----------- MODAL DODAWANIA: usługi + pełne godziny -----------
+            const addDateInput = document.getElementById('eventDate');
+            const addTimeSelect = document.getElementById('eventTime');
+            const addServiceSelect = document.getElementById('eventTitle');
 
-            if (isWorkshop){
-             // Obsługa dynamicznej zmiany slotMinTime i slotMaxTime
-            document.getElementById('applySlotTimes').addEventListener('click', function () {
-                var newSlotMinTime = document.getElementById('slotMinTime').value + ":00";
-                var newSlotMaxTime = document.getElementById('slotMaxTime').value + ":00";
+            $('#addEventModal').on('shown.bs.modal', async function () {
+                fillServiceSelect(addServiceSelect, null);
 
-                // Walidacja: Sprawdzenie poprawności zakresu czasowego
-                if (newSlotMinTime >= newSlotMaxTime) {
-                    alert("Godzina rozpoczęcia musi być wcześniejsza niż godzina zakończenia.");
+                if (addDateInput && !addDateInput.value) addDateInput.value = localYmd(new Date());
+                if (addDateInput) {
+                    await fillFullHourSelect(addTimeSelect, addDateInput.value, null, addTimeSelect?.value || null);
+                }
+            });
+
+            addDateInput?.addEventListener('change', async function () {
+                await fillFullHourSelect(addTimeSelect, addDateInput.value, null, null);
+            });
+            // ---------------------------------------------------------------
+
+            const addEventModalEl = document.getElementById('addEventModal');
+
+            addEventModalEl.addEventListener('hidden.bs.modal', function () {
+                const form = document.getElementById('addEventForm');
+                if (!form) return;
+
+                form.querySelectorAll('input:not([type="hidden"]):not([readonly]), textarea, select')
+                    .forEach(el => {
+                        if (el.tagName === 'SELECT') el.selectedIndex = 0;
+                        else el.value = '';
+                        el.classList.remove('is-invalid', 'is-valid');
+                    });
+
+                if (addTimeSelect) addTimeSelect.innerHTML = '<option value="">-- wybierz godzinę --</option>';
+                if (addServiceSelect) addServiceSelect.innerHTML = '<option value="">-- wybierz usługę --</option>';
+            });
+
+            document.getElementById('addEventButton').addEventListener('click', function () {
+                var modal = new bootstrap.Modal(document.getElementById('addEventModal'));
+                modal.show();
+            });
+
+            // ---------------- LOGIKA MAREK/MODELI (bez zmian) ----------------
+            const plSelect2 = { noResults: () => 'Brak wyników.' };
+
+            function initSelect2() {
+                if ($('#vehicleMakeDropdown').length) {
+                    $('#vehicleMakeDropdown').select2({
+                        dropdownParent: $('#addEventModal'),
+                        width: '100%',
+                        placeholder: '-- wybierz markę --',
+                        allowClear: true,
+                        language: plSelect2
+                    });
+                }
+                if ($('#vehicleModelDropdown').length) {
+                    $('#vehicleModelDropdown').select2({
+                        dropdownParent: $('#addEventModal'),
+                        width: '100%',
+                        placeholder: '-- wybierz model --',
+                        allowClear: true,
+                        language: plSelect2
+                    });
+                }
+            }
+
+            function disableModelSelect(disabled) {
+                const model = $('#vehicleModelDropdown');
+                if (!model.length) return;
+
+                model.prop('disabled', disabled);
+
+                if (disabled) {
+                    model.empty().append('<option value="">Najpierw wybierz markę</option>');
+                    model.val(null).trigger('change');
+                } else {
+                    model.empty().append('<option value=""></option>');
+                    model.val(null).trigger('change');
+                }
+            }
+
+            function loadCarMakesToSelect(savedMakeId, savedModelId) {
+                if (!$('#vehicleMakeDropdown').length) return;
+
+                $.get('/Account/GetMakes', function (data) {
+                    const makeSel = $('#vehicleMakeDropdown');
+                    makeSel.empty().append('<option value=""></option>');
+
+                    data.forEach(m => makeSel.append(new Option(m.name, m.id)));
+
+                    disableModelSelect(true);
+
+                    if (savedMakeId && savedMakeId !== "0") {
+                        makeSel.val(savedMakeId).trigger('change');
+                        makeSel.data('savedModelId', savedModelId);
+                    } else {
+                        makeSel.val(null).trigger('change');
+                    }
+                });
+            }
+
+            function loadModelsForMake(makeId, savedModelId) {
+                const modelSel = $('#vehicleModelDropdown');
+                if (!modelSel.length) return;
+
+                if (!makeId) {
+                    disableModelSelect(true);
                     return;
                 }
 
-                // Aktualizacja opcji kalendarza
-                calendar.setOption('slotMinTime', newSlotMinTime);
-                calendar.setOption('slotMaxTime', newSlotMaxTime);
+                disableModelSelect(false);
 
-                alert("Godziny zostały zaktualizowane: " + newSlotMinTime + " - " + newSlotMaxTime);
-            });
+                $.get('/Account/GetModelsByMake', { makeId: makeId }, function (data) {
+                    modelSel.empty().append('<option value=""></option>');
+                    data.forEach(model => modelSel.append(new Option(model.name, model.id)));
+
+                    if (savedModelId && savedModelId !== "0") modelSel.val(savedModelId).trigger('change');
+                    else modelSel.val(null).trigger('change');
+                });
             }
+
+            $(document).on('change', '#vehicleMakeDropdown', function () {
+                const makeId = $(this).val();
+                const savedModelId = $('#vehicleMakeDropdown').data('savedModelId');
+                $('#vehicleMakeDropdown').data('savedModelId', null);
+                loadModelsForMake(makeId, savedModelId);
+            });
+
+            $('#addEventModal').on('shown.bs.modal', function () {
+                if ($('#vehicleMakeDropdown').length && !$('#vehicleMakeDropdown').hasClass('select2-hidden-accessible')) {
+                    initSelect2();
+                }
+                const savedMakeId = '@ViewBag.VehicleMakeId';
+                const savedModelId = '@ViewBag.VehicleModelId';
+                loadCarMakesToSelect(savedMakeId, savedModelId);
+            });
+            // ----------------------------------------------------------------
 
             // Obsługa zapisu nowego wydarzenia
             document.getElementById('saveEventModalButton').addEventListener('click', function () {
-                console.log("Przycisk 'Dodaj wizytę' został kliknięty."); // Dodaj ten log
+
+                const make = $('#vehicleMakeDropdown').length
+                    ? $('#vehicleMakeDropdown option:selected').text()
+                    : (document.getElementById('clientVehicleMake')?.value || null);
+
+                const model = $('#vehicleModelDropdown').length
+                    ? $('#vehicleModelDropdown option:selected').text()
+                    : (document.getElementById('clientVehicleModel')?.value || null);
 
                 var newEvent = {
                     workshopId: document.getElementById('workshopId').value,
-                    title: document.getElementById('eventTitle').value,
-                    start: new Date(document.getElementById('eventDate').value + 'T' + document.getElementById('eventTime').value).toISOString(),
-                    vehicleMake: document.getElementById('vehicleMake')?.value || null,
-                    vehicleModel: document.getElementById('vehicleModel')?.value || null,
+                    title: document.getElementById('eventTitle').value, // ✅ usługa
+                    start: document.getElementById('eventDate').value + 'T' + document.getElementById('eventTime').value,
+
+                    vehicleMake: make,
+                    vehicleModel: model,
                     vehicleYear: document.getElementById('vehicleYear')?.value || null,
                     vehiclePlate: document.getElementById('vehiclePlate')?.value || null,
                     vehicleVin: document.getElementById('vehicleVin')?.value || null,
@@ -270,41 +600,68 @@
                     customerEmail: document.getElementById('customerEmail').value
                 };
 
-                console.log("Dane nowego wydarzenia:", newEvent); // Loguj dane nowego wydarzenia
-
-                // Minimalna walidacja
-                if (!newEvent.title || !newEvent.start || !newEvent.customerPhone || !newEvent.customerEmail) {
-                    alert("Uzupełnij wszystkie wymagane pola.");
+                if (!newEvent.title) { alert("Wybierz usługę."); return; }
+                if (!document.getElementById('eventDate').value || !document.getElementById('eventTime').value) {
+                    alert("Wybierz datę i godzinę.");
                     return;
                 }
+                if (!newEvent.customerPhone || !newEvent.customerEmail) {
+                    alert("Uzupełnij dane kontaktowe klienta.");
+                    return;
+                }
+                if ($('#vehicleMakeDropdown').length && !$('#vehicleMakeDropdown').val()) { alert("Wybierz markę pojazdu."); return; }
+                if ($('#vehicleModelDropdown').length && !$('#vehicleModelDropdown').val()) { alert("Wybierz model pojazdu."); return; }
 
                 fetch('/Workshop/AddEvent', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(newEvent)
                 })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Odpowiedź serwera:", data); // Loguj odpowiedź serwera
-                    if (data.success) {
-                        alert("Wizyta została dodana.");
-                        calendar.refetchEvents();
-                        var modal = bootstrap.Modal.getInstance(document.getElementById('addEventModal'));
-                        modal.hide();
-                    } else {
-                        alert("Błąd: " + data.message);
-                    }
-                })
-                .catch(error => console.error("Błąd:", error));
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Wizyta została dodana.");
+                            calendar.refetchEvents();
+                            var modal = bootstrap.Modal.getInstance(document.getElementById('addEventModal'));
+                            modal.hide();
+                        } else {
+                            alert("Błąd: " + data.message);
+                        }
+                    })
+                    .catch(error => console.error("Błąd:", error));
             });
 
+            // ------ MODAL SZCZEGÓŁÓW: usługa + pełne godziny + edycja ------
+            let detailsCurrentEventId = null;
+
+            async function refreshDetailTimesForCurrent() {
+                const dateEl = document.getElementById('detailEventDate');
+                const timeEl = document.getElementById('detailEventTime');
+                if (!dateEl || !timeEl || !dateEl.value) return;
+
+                const preferred = timeEl.value || null;
+                await fillFullHourSelect(timeEl, dateEl.value, detailsCurrentEventId, preferred);
+            }
 
             function openDetailsModal(event) {
                 var modal = new bootstrap.Modal(document.getElementById('eventDetailsModal'));
+                detailsCurrentEventId = event.id;
 
-                document.getElementById('detailEventTitle').value = event.title;
-                document.getElementById('detailEventDate').value = event.start.toISOString().split('T')[0];
-                document.getElementById('detailEventTime').value = event.start.toISOString().split('T')[1].slice(0, 5);
+                const d = event.start;
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                const hh = String(d.getHours()).padStart(2, '0');
+                const mi = String(d.getMinutes()).padStart(2, '0');
+                const currentTime = `${hh}:${mi}`;
+                const ymd = `${yyyy}-${mm}-${dd}`;
+
+                // ✅ usługa (Title)
+                fillServiceSelect(document.getElementById('detailEventTitle'), event.title);
+
+                document.getElementById('detailEventDate').value = ymd;
+                fillFullHourSelect(document.getElementById('detailEventTime'), ymd, event.id, currentTime);
+
                 document.getElementById('detailVehicleMake').value = event.extendedProps.vehicleMake || '';
                 document.getElementById('detailVehicleModel').value = event.extendedProps.vehicleModel || '';
                 document.getElementById('detailVehicleYear').value = event.extendedProps.vehicleYear || '';
@@ -323,17 +680,17 @@
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ id: event.id })
                             })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    alert("Wizyta została usunięta.");
-                                    calendar.refetchEvents();
-                                    modal.hide();
-                                } else {
-                                    alert("Nie udało się usunąć wizyty.");
-                                }
-                            })
-                            .catch(error => console.error("Błąd:", error));
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert("Wizyta została usunięta.");
+                                        calendar.refetchEvents();
+                                        modal.hide();
+                                    } else {
+                                        alert("Nie udało się usunąć wizyty.");
+                                    }
+                                })
+                                .catch(error => console.error("Błąd:", error));
                         }
                     };
 
@@ -343,38 +700,58 @@
                         document.getElementById('deleteEventButton').classList.add('d-none');
                         document.getElementById('saveEventButton').classList.remove('d-none');
                         document.getElementById('cancelEditButton').classList.remove('d-none');
+
+                        document.getElementById('eventDetailsModal').classList.add('editing');
+                        refreshDetailTimesForCurrent();
                     };
 
                     document.getElementById('saveEventButton').onclick = function () {
                         var updatedEvent = {
                             id: event.id,
-                            title: document.getElementById('detailEventTitle').value,
-                            start: new Date(document.getElementById('detailEventDate').value + 'T' + document.getElementById('detailEventTime').value).toISOString(),
+                            title: document.getElementById('detailEventTitle').value, // ✅ usługa
+                            start: document.getElementById('detailEventDate').value + 'T' + document.getElementById('detailEventTime').value,
                             vehicleMake: document.getElementById('detailVehicleMake').value,
                             vehicleModel: document.getElementById('detailVehicleModel').value,
                             vehicleYear: document.getElementById('detailVehicleYear').value,
                             vehiclePlate: document.getElementById('detailVehiclePlate').value,
                             vehicleVin: document.getElementById('detailVehicleVin').value,
                             customerPhone: document.getElementById('detailCustomerPhone').value,
-                            customerEmail: document.getElementById('detailCustomerEmail').value,
+                            customerEmail: document.getElementById('detailCustomerEmail').value
                         };
+
+                        if (!updatedEvent.title) { alert("Wybierz usługę."); return; }
+                        if (!document.getElementById('detailEventDate').value || !document.getElementById('detailEventTime').value) {
+                            alert("Wybierz datę i godzinę.");
+                            return;
+                        }
 
                         fetch('/Workshop/UpdateEvent', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(updatedEvent)
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert("Wizyta została zaktualizowana.");
-                                calendar.refetchEvents();
-                                modal.hide();
-                            } else {
-                                alert("Nie udało się zaktualizować wizyty.");
-                            }
-                        })
-                        .catch(error => console.error("Błąd:", error));
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert("Wizyta została zaktualizowana.");
+                                    calendar.refetchEvents();
+
+                                    const detailsEl = document.getElementById('eventDetailsModal');
+                                    setFieldsEditable(false);
+                                    document.getElementById('editEventButton')?.classList.remove('d-none');
+                                    document.getElementById('deleteEventButton')?.classList.remove('d-none');
+                                    document.getElementById('saveEventButton')?.classList.add('d-none');
+                                    document.getElementById('cancelEditButton')?.classList.add('d-none');
+                                    detailsEl.classList.remove('editing');
+                                    detailsEl.classList.remove('is-editing');
+
+                                    const modal = bootstrap.Modal.getInstance(detailsEl) || new bootstrap.Modal(detailsEl);
+                                    modal.hide();
+                                } else {
+                                    alert("Nie udało się zaktualizować wizyty.");
+                                }
+                            })
+                            .catch(error => console.error("Błąd:", error));
                     };
 
                     document.getElementById('cancelEditButton').onclick = function () {
@@ -383,15 +760,58 @@
                         document.getElementById('deleteEventButton').classList.remove('d-none');
                         document.getElementById('saveEventButton').classList.add('d-none');
                         document.getElementById('cancelEditButton').classList.add('d-none');
+
+                        document.getElementById('eventDetailsModal').classList.remove('editing');
                     };
                 }
             }
 
+            document.getElementById('detailEventDate')?.addEventListener('change', function () {
+                const detailsEl = document.getElementById('eventDetailsModal');
+                if (detailsEl?.classList.contains('editing')) refreshDetailTimesForCurrent();
+            });
+
             function setFieldsEditable(isEditable) {
                 const fields = document.querySelectorAll('#eventDetailsModal input');
-                fields.forEach(field => {
-                    field.readOnly = !isEditable;
+                fields.forEach(field => field.readOnly = !isEditable);
+
+                const serviceSel = document.getElementById('detailEventTitle');
+                if (serviceSel) serviceSel.disabled = !isEditable;
+
+                const timeSel = document.getElementById('detailEventTime');
+                if (timeSel) timeSel.disabled = !isEditable;
+            }
+
+            const detailsModalEl = document.getElementById('eventDetailsModal');
+
+            if (detailsModalEl) {
+                detailsModalEl.addEventListener('hide.bs.modal', function (e) {
+                    if (detailsModalEl.classList.contains('editing')) e.preventDefault();
                 });
+                detailsModalEl.addEventListener('click', function (e) {
+                    if (detailsModalEl.classList.contains('editing') && e.target === detailsModalEl) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }
+                }, true);
+                document.addEventListener('keydown', function (ev) {
+                    if (ev.key === 'Escape' &&
+                        detailsModalEl.classList.contains('show') &&
+                        detailsModalEl.classList.contains('editing')) {
+                        ev.preventDefault();
+                        ev.stopPropagation();
+                    }
+                }, true);
+            }
+        });
+
+        document.addEventListener('shown.bs.modal', function () {
+            var input = document.getElementById('vehicleYear');
+            if (!input) return;
+
+            if (!input.value) {
+                var raw = (input.getAttribute('data-year') || '').trim();
+                if (/^\d{4}$/.test(raw)) input.value = raw;
             }
         });
     </script>

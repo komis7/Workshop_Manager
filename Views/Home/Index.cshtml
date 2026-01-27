@@ -3,25 +3,69 @@
     var workshops = ViewBag.Workshops as IEnumerable<dynamic>;
 }
 
-<div class="container mt-4">
-    <h1 class="text-center mb-4">Lista Warsztatów</h1>
-    <div class="row">
+    <h1 class="text-center mb-4 fw-semibold display-6 border-bottom pb-3">Lista Warsztatów</h1>
+
+    <!-- Pasek wyszukiwania / filtry -->
+    <div class="row align-items-center g-2 mb-4">
+        <div class="col-12 col-md">
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input id="workshopSearch" type="search" class="form-control" placeholder="Szukaj po nazwie, adresie lub usłudze…" aria-label="Szukaj warsztatów">
+            </div>
+        </div>
+        <div class="col-auto">
+            <span class="text-secondary small"><span id="workshopCount">0</span> wyników</span>
+        </div>
+    </div>
+
+    <div id="workshopsGrid" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
         @if (workshops != null && workshops.Any())
         {
             foreach (var workshop in workshops)
             {
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
+                var company = (string)workshop.CompanyName ?? "";
+                var phone = (string)workshop.PhoneNumber ?? "";
+                var address = (string)workshop.Address ?? "";
+                var services = (string)workshop.Services ?? "";
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 rounded-4 workshop-card hover-elevate"
+                         data-search-text="@($"{company} {address} {services}".ToLowerInvariant())">
                         <div class="card-body">
-                            <h5 class="card-title">@workshop.CompanyName</h5>
-                            <p class="card-text">
-                                <strong>Numer telefonu:</strong> @workshop.PhoneNumber<br />
-                                <strong>Adres:</strong> @workshop.Address<br />
-                                <strong>Usługi:</strong> @workshop.Services
-                            </p>
+                            <h5 class="card-title mb-2 text-primary fw-bold">
+                                <i class="bi bi-building me-1"></i>@company
+                            </h5>
+
+                            <ul class="list-unstyled small mb-0 text-secondary">
+                                @if (!string.IsNullOrWhiteSpace(phone))
+                                {
+                                    <li class="mb-1">
+                                        <i class="bi bi-telephone me-1"></i>
+                                        <a class="link-body-emphasis text-decoration-none" href="tel:@phone">@phone</a>
+                                    </li>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(address))
+                                {
+                                    <li class="mb-1">
+                                        <i class="bi bi-geo-alt me-1"></i>@address
+                                    </li>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(services))
+                                {
+                                    <li class="mb-1">
+                                        <strong>Usługi:</strong> @services
+                                    </li>
+                                }
+                            </ul>
                         </div>
-                        <div class="card-footer text-center">
-                            <a asp-controller="Workshop" asp-action="Schedule" asp-route-id="@workshop.Id" class="btn btn-primary">Umów wizytę</a>
+
+                        <div class="card-footer bg-transparent border-0 text-center pt-0 pb-3">
+                            <a asp-controller="Workshop"
+                               asp-action="Schedule"
+                               asp-route-id="@workshop.Id"
+                               class="btn btn-outline-primary px-4">
+                                <i class="bi bi-calendar-check me-1"></i> Umów wizytę
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -29,9 +73,57 @@
         }
         else
         {
-            <div class="col-12 text-center">
-                <p>Brak warsztatów do wyświetlenia.</p>
+            <div class="col-12">
+                <div class="alert alert-secondary text-center rounded-3 mb-0">
+                    Brak warsztatów do wyświetlenia.
+                </div>
             </div>
         }
     </div>
-</div>
+
+@section Styles {
+    <style>
+        .hover-elevate {
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+
+            .hover-elevate:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 .75rem 1.5rem rgba(0, 0, 0, .08);
+            }
+        .link-body-emphasis:hover {
+            text-decoration: underline;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        (function () {
+            const input = document.getElementById('workshopSearch');
+            const grid = document.getElementById('workshopsGrid');
+            const cards = Array.from(grid.querySelectorAll('.workshop-card')).map(card => ({
+                el: card,
+                haystack: (card.getAttribute('data-search-text') || '').trim()
+            }));
+            const counter = document.getElementById('workshopCount');
+
+            function applyFilter() {
+                const q = (input.value || '').toLowerCase().trim();
+                let visible = 0;
+                cards.forEach(c => {
+                    const match = !q || c.haystack.includes(q);
+                    c.el.parentElement.style.display = match ? '' : 'none'; // .col wrapper
+                    if (match) visible++;
+                });
+                counter.textContent = visible;
+            }
+
+            // Inicjalizacja licznika
+            applyFilter();
+
+            input.addEventListener('input', applyFilter);
+        })();
+    </script>
+}
+

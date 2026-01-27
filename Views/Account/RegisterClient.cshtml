@@ -43,11 +43,11 @@
 
                         <h5 class="text-primary">Dane pojazdu</h5>
 
-                        <div class="mb-3">
+                        <div class="mb-3 position-relative">
                             <label class="form-label">Marka pojazdu</label>
-                            <select asp-for="SelectedMakeId" class="form-control" id="makeDropdown" asp-items="@(new SelectList(Model.Makes, "Id", "Name"))">
-                                <option value="">-- wybierz markę --</option>
-                            </select>
+                            <input type="text" class="form-control" id="vehicleMakeInput" placeholder="Wpisz lub wybierz markę" autocomplete="off" />
+                            <ul id="vehicleMakeList" class="list-group position-absolute w-100" style="max-height:200px; overflow-y:auto; display:none; z-index:1055;"></ul>
+                            <input type="hidden" asp-for="SelectedMakeId" id="selectedMakeId" />
                             <span asp-validation-for="SelectedMakeId" class="text-danger"></span>
                         </div>
 
@@ -93,22 +93,70 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $('#makeDropdown').change(function () {
-                var makeId = $(this).val();
+
+            let allMakes = [];
+
+            function loadCarMakes() {
+                $.get('/Account/GetMakes', function (data) {
+                    allMakes = data;
+                });
+            }
+
+            function renderMakesList(filter) {
+                const list = $('#vehicleMakeList');
+                list.empty();
+
+                const filtered = allMakes.filter(make =>
+                    make.name.toLowerCase().startsWith(filter.toLowerCase())
+                );
+
+                if (filtered.length === 0) {
+                    list.hide();
+                    return;
+                }
+
+                filtered.forEach(make => {
+                    list.append(`<li class="list-group-item list-group-item-action" data-id="${make.id}">${make.name}</li>`);
+                });
+
+                list.show();
+            }
+
+            $('#vehicleMakeInput').on('focus', function () {
+                const value = $(this).val();
+                renderMakesList(value);
+            });
+
+            $('#vehicleMakeInput').on('keyup', function () {
+                const value = $(this).val();
+                renderMakesList(value);
+            });
+
+            $('#vehicleMakeList').on('click', 'li', function () {
+                const selectedText = $(this).text();
+                const selectedId = $(this).data('id');
+
+                $('#vehicleMakeInput').val(selectedText);
+                $('#selectedMakeId').val(selectedId);
+                $('#vehicleMakeList').hide();
+
                 $('#modelDropdown').empty().append('<option>Ładowanie modeli...</option>');
 
-                if (makeId) {
-                    $.get('/Account/GetModelsByMake', { makeId: makeId }, function (data) {
-                        $('#modelDropdown').empty();
-                        $('#modelDropdown').append('<option value="">-- wybierz model --</option>');
-                        $.each(data, function (index, model) {
-                            $('#modelDropdown').append('<option value="' + model.id + '">' + model.name + '</option>');
-                        });
+                $.get('/Account/GetModelsByMake', { makeId: selectedId }, function (data) {
+                    $('#modelDropdown').empty().append('<option value="">-- wybierz model --</option>');
+                    $.each(data, function (index, model) {
+                        $('#modelDropdown').append('<option value="' + model.id + '">' + model.name + '</option>');
                     });
-                } else {
-                    $('#modelDropdown').empty().append('<option>-- wybierz markę najpierw --</option>');
+                });
+            });
+
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('#vehicleMakeInput').length && !$(e.target).closest('#vehicleMakeList').length) {
+                    $('#vehicleMakeList').hide();
                 }
             });
+
+            loadCarMakes();
         });
     </script>
 }

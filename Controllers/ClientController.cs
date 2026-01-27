@@ -107,7 +107,7 @@ namespace WorkShopManager.Controllers
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index"); // lub inna strona po zalogowaniu
+                return RedirectToAction("Index");
             }
 
             return View();

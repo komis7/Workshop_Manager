@@ -8,6 +8,6 @@
         public string CarModel { get; set; } // Model samochodu
         public DateTime AppointmentDate { get; set; } // Data wizyty
         public string ServiceType { get; set; } // Typ usługi (np. przegląd, naprawa)
-    
+
     }
 }

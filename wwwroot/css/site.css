@@ -27,10 +27,10 @@ body {
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
-    background-color: #f8f9fa; /* Opcjonalnie, aby wyró¿niæ stopkê */
-    padding: 10px 0;
-    width: 100%; /* Upewnij siê, ¿e stopka zajmuje ca³¹ szerokoœæ */
-}
+    background-color: #f8f9fa;*/ /* Opcjonalnie, aby wyró¿niæ stopkê */
+    /*padding: 10px 0;
+    width: 100%;*/ /* Upewnij siê, ¿e stopka zajmuje ca³¹ szerokoœæ */
+/*}
 
 .card {
     margin-top: 20px;
@@ -56,4 +56,62 @@ body {
 
 .no-spinner {
     -moz-appearance: textfield;
+}*/
+
+/* 1) Obrazki i iframe’y nie wybijaj¹ uk³adu */
+/*img, svg, video, canvas, iframe {
+    max-width: 100%;
+    height: auto;
+}*/
+
+/* 2) Zapobiegaj poziomemu scrollowi przez „wystaj¹ce” elementy */
+/*html, body {
+    width: 100%;
+}
+
+.container, .container-fluid, .container-sm, .container-md, .container-lg, .container-xl, .container-xxl {
+    overflow-wrap: anywhere;
+}*/
+
+/* 3) D³ugie s³owa/URL-e i adresy nie ³ami¹ layoutu */
+/*.text-break, .address, .services {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}*/
+
+/* 4) Flex-dzieci mog¹ siê kurczyæ — kluczowe w navbarach/listach */
+/*.min-w-0 {
+    min-width: 0 !important;
+}*/
+
+/* 5) Tabele domyœlnie przewijane poziomo na ma³ych ekranach (opcjonalnie) */
+/*.table-responsive {
+    overflow-x: auto;
+}*/
+
+/* 6) Formularze na mobilkach nie „puchn¹” */
+/*.form-control, .form-select {
+    max-width: 100%;
+}*/
+
+/* 7) Karty — upewnij siê, ¿e w¹skie ekrany nie wymuszaj¹ wysokoœci */
+/*.card {
+    min-width: 0;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+footer {
+    flex-shrink: 0;
 }

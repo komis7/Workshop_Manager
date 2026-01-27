@@ -12,7 +12,7 @@ using WorkShopManager.Data;
 namespace WorkShopManager.Migrations
 {
     [DbContext(typeof(WorkshopContext))]
-    [Migration("20250806183355_InitialCreate")]
+    [Migration("20250824160726_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -277,6 +277,45 @@ namespace WorkShopManager.Migrations
                     b.ToTable("Appointments");
                 });
 
+            modelBuilder.Entity("WorkShopManager.Models.CarMake", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CarMakes");
+                });
+
+            modelBuilder.Entity("WorkShopManager.Models.CarModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CarMakeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarMakeId");
+
+                    b.ToTable("CarModels");
+                });
+
             modelBuilder.Entity("WorkShopManager.Models.Event", b =>
                 {
                     b.Property<int>("Id")
@@ -377,6 +416,22 @@ namespace WorkShopManager.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WorkShopManager.Models.CarModel", b =>
+                {
+                    b.HasOne("WorkShopManager.Models.CarMake", "CarMake")
+                        .WithMany("Models")
+                        .HasForeignKey("CarMakeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CarMake");
+                });
+
+            modelBuilder.Entity("WorkShopManager.Models.CarMake", b =>
+                {
+                    b.Navigation("Models");
                 });
 #pragma warning restore 612, 618
         }
