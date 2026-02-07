@@ -1,7 +1,15 @@
+wwwroot\android-chrome-192x192.png
+wwwroot\android-chrome-512x512.png
+wwwroot\apple-touch-icon.png
 wwwroot\css\bootstrap-theme-dark.css
 wwwroot\css\site.css
 wwwroot\data\car_data.json
+wwwroot\favicon-16x16.png
+wwwroot\favicon-32x32.png
 wwwroot\favicon.ico
+wwwroot\images\background.png
+wwwroot\images\background1.png
+wwwroot\images\logo.png
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
@@ -60,6 +68,7 @@ wwwroot\lib\jquery\dist\jquery.js
 wwwroot\lib\jquery\dist\jquery.min.js
 wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\LICENSE.txt
+wwwroot\site.webmanifest
 C:\Users\komis\Desktop\WorkShopManager_good\wwwroot\lib\jquery\LICENSE.txt
 C:\Users\komis\Desktop\WorkShopManager_good\wwwroot\lib\jquery\dist\jquery.min.map
 C:\Users\komis\Desktop\WorkShopManager_good\wwwroot\lib\jquery\dist\jquery.min.js
@@ -121,3 +130,4 @@ C:\Users\komis\Desktop\WorkShopManager_good\wwwroot\favicon.ico
 C:\Users\komis\Desktop\WorkShopManager_good\wwwroot\css\bootstrap-theme-dark.css
 C:\Users\komis\Desktop\WorkShopManager_good\wwwroot\css\site.css
 C:\Users\komis\Desktop\WorkShopManager_good\wwwroot\data\car_data.json
+C:\Users\komis\Desktop\WorkShopManager_good\wwwroot\site.webmanifest

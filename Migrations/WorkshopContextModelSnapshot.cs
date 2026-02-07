@@ -168,11 +168,17 @@ namespace WorkShopManager.Migrations
                     b.Property<string>("City")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("CompanyNIP")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("CompanyName")
                         .HasColumnType("longtext");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CustomServicesCsv")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")
@@ -182,8 +188,8 @@ namespace WorkShopManager.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<decimal?>("HourlyRate")
-                        .HasColumnType("decimal(65,30)");
+                    b.Property<int?>("HourlyRate")
+                        .HasColumnType("int");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
@@ -198,6 +204,9 @@ namespace WorkShopManager.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
+
+                    b.Property<string>("OpenDaysCsv")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext");
@@ -229,6 +238,15 @@ namespace WorkShopManager.Migrations
 
                     b.Property<string>("VehicleDetails")
                         .HasColumnType("longtext");
+
+                    b.Property<TimeSpan?>("WorkEnd")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan?>("WorkStart")
+                        .HasColumnType("time(6)");
+
+                    b.Property<int?>("WorkshopSlots")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -321,6 +339,9 @@ namespace WorkShopManager.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ClientId")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("CustomerEmail")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -329,8 +350,14 @@ namespace WorkShopManager.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("FaultDescription")
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("Start")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -357,6 +384,9 @@ namespace WorkShopManager.Migrations
 
                     b.Property<string>("WorkshopId")
                         .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("WorkshopNote")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");

@@ -6,7 +6,7 @@
     <h1 class="text-center mb-4">Witamy w warsztacie</h1>
 
     <div class="row">
-        <div class="col-md-6 mb-4">
+        <div class="col-md-6 col-lg-4 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center">
                     <h5 class="card-title">Zarządzaj Harmonogramem</h5>
@@ -15,7 +15,21 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6 mb-4">
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Historia wizyt</h5>
+                    <p class="card-text">Zobacz listę zakończonych wizyt, dane klienta, pojazd i notatkę.</p>
+                    <a asp-controller="Workshop"
+                       asp-action="VisitHistory"
+                       class="btn btn-success">
+                        Przejdź do historii
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center">
                     <h5 class="card-title">Zarządzaj Informacjami Warsztatu</h5>

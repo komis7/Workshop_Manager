@@ -1,24 +1,80 @@
-﻿<div class="container mt-4">
-    <h1 class="text-center">Historia Wizyt</h1>
-    <table class="table table-hover mt-4">
-        <thead>
-            <tr>
-                <th scope="col">Data</th>
-                <th scope="col">Warsztat</th>
-                <th scope="col">Usługa</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var visit in Model)
-            {
+﻿@model IEnumerable<WorkShopManager.Models.ClientVisitHistoryItemVm>
+
+<div class="container mt-4">
+    <h1 class="text-center">Historia wizyt</h1>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-secondary mt-4 text-center">
+            Nie masz jeszcze zakończonych wizyt.
+        </div>
+    }
+    else
+    {
+        <table class="table table-hover mt-4 align-middle">
+            <thead>
                 <tr>
-                    <td>@visit.Date.ToString("yyyy-MM-dd")</td>
-                    <td>@visit.WorkshopName</td>
-                    <td>@visit.Service</td>
+                    <th scope="col">Data</th>
+                    <th scope="col">Warsztat</th>
+                    <th scope="col">Usługa</th>
+                    <th scope="col">Dane pojazdu</th>
+                    <th scope="col">Notatka</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var visit in Model)
+                {
+                    <tr>
+                        <td>@visit.Start.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            <div class="fw-semibold">@visit.WorkshopName</div>
+                            @if (!string.IsNullOrWhiteSpace(visit.WorkshopAddress))
+                            {
+                                <div class="text-secondary small">@visit.WorkshopAddress</div>
+                            }
+                        </td>
+                        <td>@visit.ServiceTitle</td>
+                        <td>
+                            @{
+                                var parts = new List<string>();
+
+                                var makeModel = $"{visit.VehicleMake} {visit.VehicleModel}".Trim();
+                                if (!string.IsNullOrWhiteSpace(makeModel)) parts.Add(makeModel);
+
+                                if (visit.VehicleYear.HasValue) parts.Add(visit.VehicleYear.Value.ToString());
+
+                                if (!string.IsNullOrWhiteSpace(visit.VehiclePlate)) parts.Add(visit.VehiclePlate);
+
+                                @if (!string.IsNullOrWhiteSpace(visit.VehicleVin))
+                                 {
+                                    <div class="text-secondary small">VIN: @visit.VehicleVin</div>
+                                 }
+
+                             }
+
+                            @if (parts.Count > 0)
+                            {
+                                <div>@string.Join(" • ", parts)</div>
+                            }
+                            else
+                            {
+                                <span class="text-secondary">—</span>
+                            }
+                        </td>
+
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(visit.WorkshopNote))
+                            {
+                                <span>@visit.WorkshopNote</span>
+                            }
+                            else
+                            {
+                                <span class="text-secondary">—</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 </div>
-
-

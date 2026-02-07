@@ -3,6 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WorkShopManager.Models
 {
+
+    public enum VisitStatus
+    {
+        New = 0,
+        InProgress = 1,
+        Done = 2
+    }
+
     public class Event
     {
         public int Id { get; set; }
@@ -16,6 +24,9 @@ namespace WorkShopManager.Models
         public string VehicleVin { get; set; }
         public string CustomerPhone { get; set; }
         public string CustomerEmail { get; set; }
-
+        public VisitStatus Status { get; set; } = VisitStatus.New;
+        public string? FaultDescription { get; set; } 
+        public string? WorkshopNote { get; set; }
+        public string? ClientId { get; set; }
     }
 }

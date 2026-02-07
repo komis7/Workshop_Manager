@@ -1,0 +1,92 @@
+﻿@model IEnumerable<WorkShopManager.Models.WorkShopVisitHistoryItemVm>
+
+@{
+    ViewData["Title"] = "Historia wizyt";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center">Historia wizyt</h1>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-secondary mt-4 text-center">
+            Brak zakończonych wizyt.
+        </div>
+    }
+    else
+    {
+        <table class="table table-hover mt-4 align-middle">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Klient</th>
+                    <th>Usługa</th>
+                    <th>Pojazd</th>
+                    <th>Notatka</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var v in Model)
+                {
+                    <tr>
+                        <td>@v.Start.ToString("yyyy-MM-dd HH:mm")</td>
+
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(v.ClientEmail))
+                            {
+                                <div class="fw-semibold">@v.ClientEmail</div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(v.ClientPhone))
+                            {
+                                <div class="text-secondary small">@v.ClientPhone</div>
+                            }
+                            @if (string.IsNullOrWhiteSpace(v.ClientEmail) && string.IsNullOrWhiteSpace(v.ClientPhone))
+                            {
+                                <span class="text-secondary">—</span>
+                            }
+                        </td>
+
+                        <td>@v.ServiceTitle</td>
+
+                        <td>
+                            @{
+                                var parts = new List<string>();
+                                var makeModel = $"{v.VehicleMake} {v.VehicleModel}".Trim();
+                                if (!string.IsNullOrWhiteSpace(makeModel)) parts.Add(makeModel);
+                                if (v.VehicleYear.HasValue) parts.Add(v.VehicleYear.Value.ToString());
+                                if (!string.IsNullOrWhiteSpace(v.VehiclePlate)) parts.Add($"Rej: {v.VehiclePlate}");
+                            }
+
+                            @if (parts.Count > 0)
+                            {
+                                <div>@string.Join(" • ", parts)</div>
+                            }
+                            else
+                            {
+                                <span class="text-secondary">—</span>
+                            }
+
+                            @* VIN opcjonalnie jako mały tekst *@
+                            @if (!string.IsNullOrWhiteSpace(v.VehicleVin))
+                            {
+                                <div class="text-secondary small">VIN: @v.VehicleVin</div>
+                            }
+                        </td>
+
+                        <td style="max-width: 420px;">
+                            @if (!string.IsNullOrWhiteSpace(v.WorkshopNote))
+                            {
+                                <span>@v.WorkshopNote</span>
+                            }
+                            else
+                            {
+                                <span class="text-secondary">—</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+

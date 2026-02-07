@@ -11,10 +11,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("ls")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("WorkShopManager")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9b7156e59c1448236b812a5ce9ec3c32afbbdf9d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+43b1e5de240e866b9b0862ee6c781a4ad7df44a7")]
 [assembly: System.Reflection.AssemblyProductAttribute("WorkShopManager")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WorkShopManager")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

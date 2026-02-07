@@ -146,7 +146,18 @@ namespace CarWorkshopAppointments.Controllers
 
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError("", error.Description);
+                    if (error.Code == "DuplicateEmail" || error.Code == "DuplicateUserName")
+                    {
+                        ModelState.AddModelError(nameof(model.Email), "Konto z tym adresem e-mail już istnieje.");
+                    }
+                    else if (error.Code != null && error.Code.StartsWith("Password"))
+                    {
+                        ModelState.AddModelError(nameof(model.Password), error.Description);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(nameof(model.Email), error.Description);
+                    }
                 }
             }
 
@@ -174,8 +185,9 @@ namespace CarWorkshopAppointments.Controllers
                     BuildingNumber = model.BuildingNumber.ToString(),
                     PostalCode = model.PostalCode,
                     City = model.City,
+                    CompanyNIP = model.CompanyNIP,
                     Services = string.Join(", ", model.SelectedServices),
-                    HourlyRate = model.HourlyRate
+                    HourlyRate = model.HourlyRate,
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -188,7 +200,18 @@ namespace CarWorkshopAppointments.Controllers
 
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError("", error.Description);
+                    if (error.Code == "DuplicateEmail" || error.Code == "DuplicateUserName")
+                    {
+                        ModelState.AddModelError(nameof(model.Email), "Konto z tym adresem e-mail już istnieje.");
+                    }
+                    else if (error.Code != null && error.Code.StartsWith("Password"))
+                    {
+                        ModelState.AddModelError(nameof(model.Password), error.Description);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(nameof(model.Email), error.Description);
+                    }
                 }
             }
             return View(model);

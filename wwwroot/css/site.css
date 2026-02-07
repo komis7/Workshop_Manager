@@ -1,4 +1,4 @@
-html {
+/*html {
   font-size: 14px;
 }
 
@@ -27,7 +27,7 @@ body {
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
-    background-color: #f8f9fa;*/ /* Opcjonalnie, aby wyró¿niæ stopkê */
+    background-color: #f8f9fa;*/*/ /* Opcjonalnie, aby wyró¿niæ stopkê */
     /*padding: 10px 0;
     width: 100%;*/ /* Upewnij siê, ¿e stopka zajmuje ca³¹ szerokoœæ */
 /*}

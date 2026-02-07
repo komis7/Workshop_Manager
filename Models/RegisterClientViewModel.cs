@@ -24,15 +24,15 @@ namespace WorkShopManager.Models
         public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Marka pojazdu jest wymagana.")]
-        public int SelectedMakeId { get; set; }
+        public int? SelectedMakeId { get; set; }
 
         [Required(ErrorMessage = "Model pojazdu jest wymagany.")]
-        public int SelectedModelId { get; set; }
-
+        public int? SelectedModelId { get; set; }
+        
         public List<CarMake>? Makes { get; set; }
         public List<CarModel>? Models { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Podaj rok produkcji samochodu")]
         [RegularExpression(@"^\d{4}$", ErrorMessage = "Rok produkcji musi mieć 4 cyfry.")]
         [Range(1950, 2100, ErrorMessage = "Podaj poprawny rok produkcji.")]
         public string VehicleYear { get; set; }

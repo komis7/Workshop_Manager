@@ -573,7 +573,6 @@ C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\WorkShopManager.sou
 C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\scopedcss\bundle\WorkShopManager.styles.css
 C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\scopedcss\projectbundle\WorkShopManager.bundle.scp.css
-C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\compressed\td2g1ktz15-61n19gt1b8.gz
 C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\compressed\uz7gbk1rfz-xtxxf3hu2r.gz
 C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\compressed\aoo5afx9y0-agp80tu62r.gz
 C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\compressed\41g2lavfjp-st1cbwfwo5.gz
@@ -649,5 +648,7 @@ C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\rjimswa.dswa.cache.
 C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
 C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
 C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\staticwebassets.build.json.cache
-C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\compressed\fti34ufd8v-kyqxk7ngvd.gz
-C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\compressed\lfah3po6th-ufzkp0l9n5.gz
+C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\compressed\fti34ufd8v-8bqp660nvn.gz
+C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\compressed\lfah3po6th-vr7ywo1zqy.gz
+C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\compressed\td2g1ktz15-akt3xij1lp.gz
+C:\Users\komis\Desktop\WorkShopManager_good\obj\Debug\net9.0\compressed\h0wbqdudoy-6sx6pifph3.gz

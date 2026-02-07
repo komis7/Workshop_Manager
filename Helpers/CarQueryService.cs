@@ -8,7 +8,7 @@ public class CarQueryService
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "data", "car_data.json");
         if (!File.Exists(filePath))
         {
-            Console.WriteLine("❌ Plik JSON nie został znaleziony.");
+            Console.WriteLine("Plik JSON nie został znaleziony.");
             return new List<CarMake>();
         }
 
@@ -31,7 +31,7 @@ public class CarQueryService
         })
         .ToList();
 
-        Console.WriteLine($"✅ Załadowano {makeList.Count} marek i łączną liczbę modeli: {makeList.Sum(m => m.Models.Count)}");
+        Console.WriteLine($"Załadowano {makeList.Count} marek i łączną liczbę modeli: {makeList.Sum(m => m.Models.Count)}");
 
         return makeList;
     }

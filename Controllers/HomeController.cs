@@ -40,7 +40,8 @@ namespace WorkShopManager.Controllers
                     w.CompanyName,
                     w.PhoneNumber,
                     Address = $"{w.Street} {w.BuildingNumber}, {w.PostalCode} {w.City}",
-                    Services = w.Services
+                    Services = w.Services,
+                    w.HourlyRate
                 })
                 .ToList();
 

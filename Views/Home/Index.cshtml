@@ -1,22 +1,45 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
     var workshops = ViewBag.Workshops as IEnumerable<dynamic>;
-}
 
-    <h1 class="text-center mb-4 fw-semibold display-6 border-bottom pb-3">Lista Warsztatów</h1>
+    string FormatPhone(string p)
+    {
+        if (string.IsNullOrWhiteSpace(p)) return "";
 
-    <!-- Pasek wyszukiwania / filtry -->
-    <div class="row align-items-center g-2 mb-4">
-        <div class="col-12 col-md">
-            <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                <input id="workshopSearch" type="search" class="form-control" placeholder="Szukaj po nazwie, adresie lub usłudze…" aria-label="Szukaj warsztatów">
+        var digits = new string(p.Where(char.IsDigit).ToArray());
+
+        // standard PL: 9 cyfr → 123 456 789
+        if (digits.Length == 9)
+        {
+            return $"{digits[..3]} {digits.Substring(3, 3)} {digits.Substring(6, 3)}";
+        }
+
+        return p;
+    }
+
+ }
+
+<div class="container-fluid px-0">
+
+     <div class="home-header">
+        <h1 class="text-center mb-4 display-6 border-bottom pb-3 workshop-heading">
+            Wybierz swój warsztat
+        </h1>
+    </div>
+
+        <!-- Pasek wyszukiwania / filtry -->
+        <div class="row align-items-center g-2 mb-4">
+            <div class="col-12 col-md">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input id="workshopSearch" type="search" class="form-control" placeholder="Szukaj po nazwie, adresie lub usłudze…" aria-label="Szukaj warsztatów">
+                </div>
+            </div>
+            <div class="col-auto">
+                <span class="text-secondary small"><span id="workshopCount">0</span> wyników</span>
             </div>
         </div>
-        <div class="col-auto">
-            <span class="text-secondary small"><span id="workshopCount">0</span> wyników</span>
-        </div>
-    </div>
+
 
     <div id="workshopsGrid" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
         @if (workshops != null && workshops.Any())
@@ -27,6 +50,7 @@
                 var phone = (string)workshop.PhoneNumber ?? "";
                 var address = (string)workshop.Address ?? "";
                 var services = (string)workshop.Services ?? "";
+                var rate = (int?)workshop.HourlyRate;
 
                 <div class="col">
                     <div class="card h-100 shadow-sm border-0 rounded-4 workshop-card hover-elevate"
@@ -35,13 +59,12 @@
                             <h5 class="card-title mb-2 text-primary fw-bold">
                                 <i class="bi bi-building me-1"></i>@company
                             </h5>
-
                             <ul class="list-unstyled small mb-0 text-secondary">
                                 @if (!string.IsNullOrWhiteSpace(phone))
                                 {
-                                    <li class="mb-1">
-                                        <i class="bi bi-telephone me-1"></i>
-                                        <a class="link-body-emphasis text-decoration-none" href="tel:@phone">@phone</a>
+                                    <li class="mb-2 workshop-phone">
+                                        <i class="bi bi-telephone me-2"></i>
+                                        <a class="link-body-emphasis text-decoration-none" href="tel:@phone">@FormatPhone(phone)</a>
                                     </li>
                                 }
                                 @if (!string.IsNullOrWhiteSpace(address))
@@ -54,6 +77,12 @@
                                 {
                                     <li class="mb-1">
                                         <strong>Usługi:</strong> @services
+                                    </li>
+                                }
+                            @if (rate != null)
+                                {
+                                    <li class="mb-1">
+                                        <strong>Stawka:</strong> @rate zł/h
                                     </li>
                                 }
                             </ul>
@@ -80,23 +109,7 @@
             </div>
         }
     </div>
-
-@section Styles {
-    <style>
-        .hover-elevate {
-            transition: transform .18s ease, box-shadow .18s ease;
-        }
-
-            .hover-elevate:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 .75rem 1.5rem rgba(0, 0, 0, .08);
-            }
-        .link-body-emphasis:hover {
-            text-decoration: underline;
-        }
-    </style>
-}
-
+</div>
 @section Scripts {
     <script>
         (function () {

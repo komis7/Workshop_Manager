@@ -1,58 +1,178 @@
 ﻿@using System.Text.Json
 
-<h1>Harmonogram Warsztatu</h1>
+@* ==========================================================
+   Schedule.cshtml
+   - FullCalendar + dwa modale (dodawanie + szczegóły/edycja)
+   - Logika strony w jednym dużym <script> na dole (na razie)
+   ========================================================== *@
 
+@* =========================
+   1) NAGŁÓWEK / AKCJE
+   ========================= *@
+<h1>Harmonogram Warsztatu</h1>
 <button id="addEventButton" class="btn btn-primary">Dodaj nową wizytę</button>
 
+<!-- Legenda statusów -->
+<div class="status-legend my-3">
+    <div class="status-legend__rule"></div>
+
+    <div class="status-legend__items">
+        <div class="status-legend__item">
+            <span class="status-dot status-dot--new"></span>
+            <span class="status-legend__text">Zaplanowana</span>
+        </div>
+
+        <div class="status-legend__item">
+            <span class="status-dot status-dot--progress"></span>
+            <span class="status-legend__text">W trakcie realizacji</span>
+        </div>
+
+        <div class="status-legend__item">
+            <span class="status-dot status-dot--done"></span>
+            <span class="status-legend__text">Zakończona</span>
+        </div>
+    </div>
+
+    <div class="status-legend__rule"></div>
+</div>
+
+
+
+@* =========================
+   2) KALENDARZ
+   ========================= *@
 <div id="calendar"></div>
 
 <style>
-    #calendar .fc {
-        outline: 3px solid magenta !important;
+    /* ===== Legenda statusów ===== */
+    .status-legend {
+        display: flex;
+        flex-direction: column;
+        gap: .75rem;
     }
 
-        #calendar .fc .fc-scrollgrid,
-        #calendar .fc .fc-scrollgrid * {
-            background-color: #25272c !important;
-            border-color: #2f3238 !important;
-        }
+    .status-legend__rule {
+        height: 1px;
+        background: rgba(255,255,255,.12);
+    }
 
-        #calendar .fc .fc-timegrid,
-        #calendar .fc .fc-timegrid-body,
-        #calendar .fc .fc-timegrid-col,
-        #calendar .fc .fc-timegrid-col-frame,
-        #calendar .fc .fc-timegrid-slots {
-            background-color: #25272c !important;
-        }
+    .status-legend__items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        align-items: center;
+    }
 
-        #calendar .fc .fc-daygrid,
-        #calendar .fc .fc-daygrid-body,
-        #calendar .fc .fc-daygrid-day,
-        #calendar .fc .fc-daygrid-day-bg,
-        #calendar .fc .fc-daygrid-day-frame {
-            background-color: #25272c !important;
-        }
+    .status-legend__item {
+        display: inline-flex;
+        align-items: center;
+        gap: .6rem;
+    }
 
-        #calendar .fc .fc-timegrid-slot-minor {
-            border-top-style: solid !important;
-            border-top-color: #2f3238 !important;
-        }
+    .status-legend__text {
+        font-size: .95rem;
+        opacity: .9;
+    }
+
+    /* KOLOROWE PROSTOKĄTY */
+    .status-dot {
+        width: 28px;
+        height: 14px;
+        border-radius: 4px;
+        display: inline-block;
+        border: 1px solid rgba(255,255,255,.25);
+    }
+
+    .status-dot--new {
+        background: #0d6efd;
+    }
+
+    .status-dot--progress {
+        background: #d39e00;
+    }
+
+    .status-dot--done {
+        background: #198754;
+    }
+
+    .weekdays {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+    }
+
+    .weekday-pill {
+        border-radius: 999px !important;
+        padding: .45rem .85rem;
+        font-weight: 600;
+        opacity: .92;
+    }
+
+    .btn-check:checked + .weekday-pill {
+        opacity: 1;
+        border-color: rgba(255,255,255,.35) !important;
+        box-shadow: 0 0 0 .2rem rgba(255,255,255,.08);
+    }
+
+
 </style>
 
+
+@* =========================
+   4) USTAWIENIA GODZIN (tylko warsztat)
+   ========================= *@
 @if (User.IsInRole("Workshop"))
 {
+    <div class="status-legend mt-3 mb-2">
+        <div class="status-legend__rule"></div>
+    </div>
     <div id="time-settings">
         <label for="slotMinTime">Godzina rozpoczęcia:</label>
-        <input type="time" id="slotMinTime" value="08:00">
+        <input type="time" id="slotMinTime" value="@ViewBag.WorkStart" step="3600">
 
         <label for="slotMaxTime">Godzina zakończenia:</label>
-        <input type="time" id="slotMaxTime" value="18:00">
+        <input type="time" id="slotMaxTime" value="@ViewBag.WorkEnd" step="3600">
 
         <button id="applySlotTimes" class="btn btn-primary">Zastosuj</button>
     </div>
+
+    <div class="status-legend my-3">
+        <div class="status-legend__rule"></div>
+    </div>
+
+    <div id="open-days-settings">
+        <label class="form-label d-block">Dni otwarcia:</label>
+
+        <div class="weekdays">
+            <input class="btn-check open-day" type="checkbox" id="open-day-1" value="1" autocomplete="off">
+            <label class="btn btn-outline-light weekday-pill" for="open-day-1">Pon</label>
+
+            <input class="btn-check open-day" type="checkbox" id="open-day-2" value="2" autocomplete="off">
+            <label class="btn btn-outline-light weekday-pill" for="open-day-2">Wt</label>
+
+            <input class="btn-check open-day" type="checkbox" id="open-day-3" value="3" autocomplete="off">
+            <label class="btn btn-outline-light weekday-pill" for="open-day-3">Śr</label>
+
+            <input class="btn-check open-day" type="checkbox" id="open-day-4" value="4" autocomplete="off">
+            <label class="btn btn-outline-light weekday-pill" for="open-day-4">Czw</label>
+
+            <input class="btn-check open-day" type="checkbox" id="open-day-5" value="5" autocomplete="off">
+            <label class="btn btn-outline-light weekday-pill" for="open-day-5">Pt</label>
+
+            <input class="btn-check open-day" type="checkbox" id="open-day-6" value="6" autocomplete="off">
+            <label class="btn btn-outline-light weekday-pill" for="open-day-6">Sob</label>
+        </div>
+
+        <button id="applyOpenDays" class="btn btn-primary mt-3">Zastosuj dni otwarcia</button>
+    </div>
+
+
+
 }
 
-<!-- Modal do dodawania wydarzenia -->
+@* ==========================================================
+   5) MODAL: DODAWANIE WIZYTY
+   ========================================================== *@
 <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -60,32 +180,38 @@
                 <h5 class="modal-title" id="addEventModalLabel">Dodaj nową wizytę</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
             <div class="modal-body">
-                <form id="addEventForm">
+                @* Tutaj walidacja jest po stronie przeglądarki + bootstrap (was-validated) *@
+                <form id="addEventForm" novalidate>
                     <input type="hidden" id="workshopId" value="@ViewBag.WorkshopId" />
 
-                    <!-- ✅ ZMIANA: Title = usługa warsztatu -->
+                    @* --- Usługa / data / godzina --- *@
                     <div class="mb-3">
                         <label for="eventTitle" class="form-label">Usługa</label>
-                        <select class="form-select" id="eventTitle" required>
+                        <select class="form-select" id="eventTitle" name="Title" required>
                             <option value="">-- wybierz usługę --</option>
                         </select>
+                        <div class="invalid-feedback">Wybierz usługę.</div>
                     </div>
 
                     <div class="mb-3">
                         <label for="eventDate" class="form-label">Data</label>
-                        <input type="date" class="form-control" id="eventDate" required />
+                        <input type="date" class="form-control" id="eventDate" name="EventDate" required />
+                        <div class="invalid-feedback">Wybierz datę.</div>
                     </div>
 
-                    <!-- ✅ pełne godziny -->
                     <div class="mb-3">
                         <label for="eventTime" class="form-label">Godzina</label>
-                        <select class="form-select" id="eventTime" required>
+                        <select class="form-select" id="eventTime" name="EventTime" required>
                             <option value="">-- wybierz godzinę --</option>
                         </select>
+                        <div class="invalid-feedback">Wybierz godzinę.</div>
                     </div>
 
                     <h5>Dane pojazdu</h5>
+
+                    @* Jeśli zalogowany klient -> dane readonly, w innym wypadku select2 marek/modeli *@
                     @if (User.Identity.IsAuthenticated && User.IsInRole("Client"))
                     {
                         <div class="mb-3">
@@ -102,19 +228,22 @@
                     {
                         <div class="mb-3">
                             <label for="vehicleMakeDropdown" class="form-label">Marka</label>
-                            <select class="form-select" id="vehicleMakeDropdown">
+                            <select class="form-select" id="vehicleMakeDropdown" name="VehicleMake" required>
                                 <option value="">-- wybierz markę --</option>
                             </select>
+                            <div class="invalid-feedback">Wybierz markę pojazdu.</div>
                         </div>
 
                         <div class="mb-3">
                             <label for="vehicleModelDropdown" class="form-label">Model</label>
-                            <select class="form-select" id="vehicleModelDropdown" disabled>
+                            <select class="form-select" id="vehicleModelDropdown" name="VehicleModel" disabled required>
                                 <option value="">Najpierw wybierz markę</option>
                             </select>
+                            <div class="invalid-feedback">Wybierz model pojazdu.</div>
                         </div>
                     }
 
+                    @* --- Rok produkcji: próbujemy “podciągnąć” rok z ViewBag w sensowny sposób --- *@
                     <div class="mb-3">
                         @{
                             var rawYearObj = ViewBag.VehicleYear;
@@ -130,6 +259,7 @@
                                name="VehicleYear"
                                value="@cleanYear"
                                data-year="@rawYear"
+                               required
                                min="1950"
                                max="@DateTime.Now.Year + 1"
                                placeholder="np. 2018" />
@@ -138,26 +268,78 @@
                         </div>
                     </div>
 
+                    @* --- Rejestracja: 4-9 znaków (bez spacji) --- *@
                     <div class="mb-3">
                         <label for="vehiclePlate" class="form-label">Numer rejestracyjny</label>
-                        <input type="text" class="form-control" id="vehiclePlate" value="@ViewBag.VehiclePlate" />
+                        <input type="text"
+                               class="form-control"
+                               id="vehiclePlate"
+                               name="VehiclePlate"
+                               value="@ViewBag.VehiclePlate"
+                               required
+                               minlength="4"
+                               maxlength="9"
+                               pattern="^[A-Za-z0-9]{4,9}$"
+                               placeholder="np. WZ12345" />
+                        <div class="invalid-feedback">
+                            Podaj poprawny numer rejestracyjny (4–8 znaków: litery/cyfry, bez spacji).
+                        </div>
                     </div>
+
+                    @* --- VIN: 17 znaków bez I/O/Q --- *@
                     <div class="mb-3">
                         <label for="vehicleVin" class="form-label">Numer VIN</label>
-                        <input type="text" class="form-control" id="vehicleVin" value="@ViewBag.VehicleVin" />
+                        <input type="text"
+                               class="form-control"
+                               id="vehicleVin"
+                               name="VehicleVin"
+                               value="@ViewBag.VehicleVin"
+                               required
+                               minlength="17"
+                               maxlength="17"
+                               pattern="^[A-HJ-NPR-Za-hj-npr-z0-9]{17}$"
+                               placeholder="17 znaków, bez I/O/Q" />
+                        <div class="invalid-feedback">
+                            VIN musi mieć 17 znaków (litery/cyfry), bez liter I, O, Q.
+                        </div>
                     </div>
 
                     <h5>Dane klienta</h5>
+
+                    @* Telefon: walidacja min 9 cyfr robiona w JS przez setCustomValidity *@
                     <div class="mb-3">
                         <label for="customerPhone" class="form-label">Numer telefonu</label>
-                        <input type="tel" class="form-control" id="customerPhone" value="@ViewBag.UserPhoneNumber" required />
+                        <input type="tel"
+                               class="form-control"
+                               id="customerPhone"
+                               name="CustomerPhone"
+                               required
+                               value="@((ViewBag.UserPhoneNumber as string)?.Trim())" />
+                        <div class="invalid-feedback">Podaj numer telefonu.</div>
                     </div>
+
                     <div class="mb-3">
                         <label for="customerEmail" class="form-label">Adres e-mail</label>
-                        <input type="email" class="form-control" id="customerEmail" value="@ViewBag.UserEmail" required />
+                        <input type="email"
+                               class="form-control"
+                               id="customerEmail"
+                               name="CustomerEmail"
+                               value="@ViewBag.UserEmail"
+                               required />
+                        <div class="invalid-feedback">Podaj poprawny email.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="faultDescription" class="form-label">Opis usterki (opcjonalnie)</label>
+                        <textarea class="form-control"
+                                  id="faultDescription"
+                                  name="FaultDescription"
+                                  rows="3"
+                                  maxlength="1000"
+                                  placeholder="Np. stukanie z przodu przy skręcie, kontrolka check engine, auto gaśnie na biegu jałowym..."></textarea>
                     </div>
                 </form>
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
                 <button type="button" class="btn btn-primary" id="saveEventModalButton">Dodaj wydarzenie</button>
@@ -166,7 +348,9 @@
     </div>
 </div>
 
-<!-- Modal do szczegółów wydarzenia -->
+@* ==========================================================
+   6) MODAL: SZCZEGÓŁY / EDYCJA WIZYTY
+   ========================================================== *@
 <div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-labelledby="eventDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -174,9 +358,9 @@
                 <h5 class="modal-title" id="eventDetailsModalLabel">Szczegóły wydarzenia</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
             <div class="modal-body">
                 <form>
-                    <!-- ✅ ZMIANA: Title = usługa (select) -->
                     <div class="mb-3">
                         <label for="detailEventTitle" class="form-label">Usługa</label>
                         <select class="form-select" id="detailEventTitle" disabled>
@@ -217,6 +401,7 @@
                         <label for="detailVehicleVin" class="form-label">Numer VIN</label>
                         <input type="text" class="form-control" id="detailVehicleVin" readonly />
                     </div>
+
                     <h5>Dane klienta</h5>
                     <div class="mb-3">
                         <label for="detailCustomerPhone" class="form-label">Numer telefonu</label>
@@ -226,8 +411,25 @@
                         <label for="detailCustomerEmail" class="form-label">Adres e-mail</label>
                         <input type="text" class="form-control" id="detailCustomerEmail" readonly />
                     </div>
+                    <div class="mb-3">
+                        <label for="detailFaultDescription" class="form-label">Opis usterki klienta</label>
+                        <textarea class="form-control" id="detailFaultDescription" rows="3" readonly></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="detailStatus" class="form-label">Status</label>
+                        <select class="form-select" id="detailStatus" disabled>
+                            <option value="0">Nowa</option>
+                            <option value="1">W trakcie realizacji</option>
+                            <option value="2">Zakończona</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="detailWorkshopNote" class="form-label">Opis/Notatka warsztatu</label>
+                        <textarea class="form-control" id="detailWorkshopNote" rows="4" readonly></textarea>
+                    </div>
                 </form>
             </div>
+
             <div class="modal-footer">
                 @if (User.IsInRole("Workshop"))
                 {
@@ -242,21 +444,40 @@
     </div>
 </div>
 
+
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
+            // ==========================================================
+            // 0) “konfiguracja strony”
+            // ==========================================================
             var calendarEl = document.getElementById('calendar');
             var workshopId = '@ViewBag.WorkshopId';
             var isWorkshop = '@User.IsInRole("Workshop")'.toLowerCase() === "true";
             var isClient = '@User.IsInRole("Client")'.toLowerCase() === "true";
+            const WORK_START = '@ViewBag.WorkStart';
+            const WORK_END = '@ViewBag.WorkEnd';
+            let OPEN_DAYS = '@ViewBag.OpenDays'; // np. "1,2,3,4,5,6"
+            function parseOpenDays(csv) {
+                return (csv || "")
+                    .split(',')
+                    .map(s => parseInt(s.trim(), 10))
+                    .filter(n => !Number.isNaN(n) && n >= 0 && n <= 6);
+            }
+            function getOpenDaysSet() {
+                return new Set(parseOpenDays(OPEN_DAYS));
+            }
 
-            // ✅ Usługi warsztatu przekazane z kontrolera: ViewBag.WorkshopServices = workshop.Services
+
+            // ==========================================================
+            // 1) USŁUGI (z ViewBag -> select)
+            // ==========================================================
             function getServices() {
                 const raw = @Html.Raw(JsonSerializer.Serialize((ViewBag.WorkshopServices ?? "").ToString()));
                 return raw.split(',')
-                .map(s => s.trim())
-                .filter(s => s.length > 0);
+                    .map(s => s.trim())
+                    .filter(s => s.length > 0);
             }
 
             function fillServiceSelect(selectEl, selectedValue) {
@@ -283,27 +504,47 @@
                 if (selectedValue) selectEl.value = selectedValue;
             }
 
-            // ---------- HELPERY CZASU + ZAJĘTOŚCI (pełne godziny) ----------
+
+            // ==========================================================
+            // 2) HELPERY CZASU / DAT
+            // ==========================================================
             function hmToMinutes(hm) {
                 const [h, m] = hm.split(':').map(Number);
                 return h * 60 + m;
             }
+
             function minutesToHm(mins) {
                 const h = String(Math.floor(mins / 60)).padStart(2, '0');
                 const m = String(mins % 60).padStart(2, '0');
                 return `${h}:${m}`;
             }
+
             function localYmd(d) {
                 const y = d.getFullYear();
                 const m = String(d.getMonth() + 1).padStart(2, '0');
                 const day = String(d.getDate()).padStart(2, '0');
                 return `${y}-${m}-${day}`;
             }
+
+            function todayYmd() {
+                const d = new Date();
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${y}-${m}-${day}`;
+            }
+
+
+            // ==========================================================
+            // 3) GODZINY PRACY + WOLNE SLOTY
+            // ==========================================================
             function getWorkHours() {
-                const min = document.getElementById('slotMinTime')?.value || '08:00';
-                const max = document.getElementById('slotMaxTime')?.value || '18:00';
+                // warsztat ma inputy, klient nie -> klient bierze godziny z WORK_START/WORK_END
+                const min = document.getElementById('slotMinTime')?.value || WORK_START || '08:00';
+                const max = document.getElementById('slotMaxTime')?.value || WORK_END || '18:00';
                 return { min, max };
             }
+
 
             async function fetchAllEventsRaw() {
                 const res = await fetch(`/Workshop/GetEvents?workshopId=${workshopId}`);
@@ -339,6 +580,7 @@
                     slots.push(minutesToHm(t));
                 }
 
+                // dzisiaj nie dajemy “wstecz” godzin
                 const now = new Date();
                 const today = localYmd(now);
                 if (ymd === today) {
@@ -350,6 +592,7 @@
                 const busy = await getBusyTimesSet(ymd, excludeEventId);
                 let free = slots.filter(s => !busy.has(s));
 
+                // przy edycji dopuszczamy aktualną godzinę (nawet jeśli zajęta “przez nas”)
                 if (preferredValue && preferredValue.length === 5 && !free.includes(preferredValue)) {
                     free.push(preferredValue);
                     free.sort();
@@ -374,8 +617,46 @@
 
                 if (preferredValue) selectEl.value = preferredValue;
             }
-            // -------------------------------------------------------------
 
+            // ===============================
+            // STATUS WIZYTY – sterowanie UI modalu
+            // ===============================
+            function applyDetailsUiByStatus(status) {
+                const editBtn = document.getElementById('editEventButton');
+                const saveBtn = document.getElementById('saveEventButton');
+                const cancelBtn = document.getElementById('cancelEditButton');
+                const delBtn = document.getElementById('deleteEventButton');
+
+                const note = document.getElementById('detailWorkshopNote');
+                const statusSel = document.getElementById('detailStatus');
+
+                // reset domyślnego UI
+                editBtn?.classList.remove('d-none');
+                delBtn?.classList.remove('d-none');
+                saveBtn?.classList.add('d-none');
+                cancelBtn?.classList.add('d-none');
+
+                note && (note.readOnly = true);
+                statusSel && (statusSel.disabled = true);
+
+                // 2 = ZAKOŃCZONA → pełna blokada
+                if (Number(status) === 2) {
+                    editBtn?.classList.add('d-none');
+                    delBtn?.classList.add('d-none');
+                    return;
+                }
+
+                // 1 = W TRAKCIE → edycja tylko opisu
+                if (Number(status) === 1) {
+                    return;
+                }
+
+                // 0 = NOWA → normalna edycja (obsłużona w przycisku Edytuj)
+            }
+
+            // ==========================================================
+            // 4) FULLCALENDAR (render + tooltips + klik)
+            // ==========================================================
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 themeSystem: 'bootstrap5',
                 initialView: 'timeGridWeek',
@@ -383,21 +664,27 @@
                 expandRows: true,
                 locale: 'pl',
                 firstDay: 1,
-                hiddenDays: [0],
+                hiddenDays: (function () {
+                    // pokazujemy tylko dni wybrane jako otwarte
+                    const open = getOpenDaysSet();
+                    const all = [0,1,2,3,4,5,6];
+                    return all.filter(d => !open.has(d)); // ukryj zamknięte
+                })(),
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
                 buttonText: {
+                    today: 'Dzisiaj',
                     dayGridMonth: 'Miesiąc',
                     timeGridWeek: 'Tydzień',
                     timeGridDay: 'Dzień'
                 },
                 events: '/Workshop/GetEvents?workshopId=' + workshopId,
                 editable: isWorkshop,
-                slotMinTime: "08:00:00",
-                slotMaxTime: "18:00:00",
+                slotMinTime: (WORK_START || "08:00") + ":00",
+                slotMaxTime: (WORK_END || "18:00") + ":00",
                 defaultTimedEventDuration: '01:00:00',
                 forceEventDuration: true,
                 eventDurationEditable: false,
@@ -405,6 +692,12 @@
                 slotLabelInterval: '01:00:00',
                 snapDuration: '01:00:00',
                 slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+                businessHours: {
+                    daysOfWeek: parseOpenDays(OPEN_DAYS),
+                    startTime: (WORK_START || "08:00") + ":00",
+                    endTime: (WORK_END || "18:00") + ":00"
+                },
+
                 allDaySlot: false,
 
                 views: {
@@ -414,11 +707,34 @@
                 },
 
                 eventDidMount: function (info) {
+
+                    // status: 0 = Zaplanowana, 1 = W trakcie, 2 = Zakończona
+                    const status = Number(info.event.extendedProps.status ?? 0);
+
+                    let statusText = 'Zaplanowana';
+                    let statusBadgeClass = 'status-dot--new';
+
+                    if (status === 1) {
+                        statusText = 'W trakcie realizacji';
+                        statusBadgeClass = 'status-dot--progress';
+                        info.el.style.backgroundColor = '#d39e00';
+                        info.el.style.borderColor = '#d39e00';
+                    } else if (status === 2) {
+                        statusText = 'Zakończona';
+                        statusBadgeClass = 'status-dot--done';
+                        info.el.style.backgroundColor = '#198754';
+                        info.el.style.borderColor = '#198754';
+                    }
+
                     const tipText = `
-                        <b>${info.event.title}</b><br>
-                        ${info.event.extendedProps.vehicleMake || ''} ${info.event.extendedProps.vehicleModel || ''}<br>
-                        ${info.event.extendedProps.customerEmail || ''}
+                        <div class="d-flex justify-content-between align-items-center gap-2 mb-1">
+                            <b>${info.event.title}</b>
+                            <span class="badge ${statusBadgeClass}">${statusText}</span>
+                        </div>
+                        <div>${info.event.extendedProps.vehicleMake || ''} ${info.event.extendedProps.vehicleModel || ''}</div>
+                        <div class="text-secondary">${info.event.extendedProps.customerEmail || ''}</div>
                     `;
+
                     new bootstrap.Tooltip(info.el, {
                         title: tipText,
                         html: true,
@@ -426,6 +742,7 @@
                         container: 'body'
                     });
                 },
+
 
                 eventClick: function (info) {
                     if (isWorkshop) {
@@ -438,11 +755,180 @@
 
             calendar.render();
 
-            // ----------- MODAL DODAWANIA: usługi + pełne godziny -----------
+            // ==========================================================
+            // GODZINY PRACY (Workshop) - zapis do DB + aktualizacja kalendarza
+            // ==========================================================
+            (function initWorkHoursButton() {
+                const btn = document.getElementById('applySlotTimes');
+                const minEl = document.getElementById('slotMinTime');
+                const maxEl = document.getElementById('slotMaxTime');
+
+                // jeśli nie jesteśmy warsztatem / nie ma przycisku -> nic nie rób
+                if (!btn || !minEl || !maxEl) return;
+
+                const toFcTime = (hhmm) => (hhmm && hhmm.length === 5) ? `${hhmm}:00` : hhmm;
+
+                btn.addEventListener('click', async () => {
+                    const min = minEl.value; // np. "08:00"
+                    const max = maxEl.value; // np. "18:00"
+
+                    if (!min || !max) {
+                        alert("Ustaw godzinę rozpoczęcia i zakończenia.");
+                        return;
+                    }
+                    if (min >= max) {
+                        alert("Godzina rozpoczęcia musi być wcześniejsza niż zakończenia.");
+                        return;
+                    }
+
+                    // 1) zapis do bazy (per zalogowany warsztat)
+                    const saveRes = await fetch('/Workshop/SaveWorkHours', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ min, max })
+                    });
+
+                    if (!saveRes.ok) {
+                        const payload = await saveRes.json().catch(() => null);
+                        alert(payload?.message || "Nie udało się zapisać godzin pracy.");
+                        return;
+                    }
+
+                    // 2) aktualizacja FullCalendar na stronie
+                    calendar.setOption('slotMinTime', toFcTime(min));
+                    calendar.setOption('slotMaxTime', toFcTime(max));
+                    calendar.render();
+
+                    // 3) odśwież listę godzin w modalu dodawania (jeśli otwarty)
+                    const addModalEl = document.getElementById('addEventModal');
+                    if (addModalEl && addModalEl.classList.contains('show')) {
+                        const dateVal = document.getElementById('eventDate')?.value;
+                        if (dateVal) {
+                            await fillFullHourSelect(
+                                document.getElementById('eventTime'),
+                                dateVal,
+                                null,
+                                document.getElementById('eventTime')?.value || null
+                            );
+                        }
+                    }
+
+                    // 4) odśwież godziny w modalu szczegółów, jeśli jesteśmy w edycji
+                    const detailsEl = document.getElementById('eventDetailsModal');
+                    if (detailsEl && detailsEl.classList.contains('editing')) {
+                        await refreshDetailTimesForCurrent();
+                    }
+
+                    alert(`Godziny pracy zapisane: ${min}–${max}`);
+                });
+            })();
+
+            (function initOpenDaysUi() {
+                const btn = document.getElementById('applyOpenDays');
+                const boxes = document.querySelectorAll('.open-day');
+
+                // klient nie ma UI -> nic nie robimy
+                if (!btn || !boxes.length) return;
+
+                // zaznaczamy checkboxy wg ViewBag.OpenDays
+                const open = getOpenDaysSet();
+                boxes.forEach(cb => cb.checked = open.has(parseInt(cb.value, 10)));
+
+                btn.addEventListener('click', async () => {
+                    const days = Array.from(document.querySelectorAll('.open-day:checked'))
+                        .map(cb => parseInt(cb.value, 10));
+
+                    if (!days.length) {
+                        alert("Wybierz co najmniej jeden dzień otwarcia.");
+                        return;
+                    }
+
+                    const res = await fetch('/Workshop/SaveOpenDays', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ days })
+                    });
+
+                    if (!res.ok) {
+                        const payload = await res.json().catch(() => null);
+                        alert(payload?.message || "Nie udało się zapisać dni otwarcia.");
+                        return;
+                    }
+
+                    // aktualizujemy lokalnie (żeby działało bez refresh)
+                    OPEN_DAYS = days.sort().join(',');
+
+                    // aktualizujemy kalendarz
+                    const openSet = getOpenDaysSet();
+                    const all = [0,1,2,3,4,5,6];
+                    const hidden = all.filter(d => !openSet.has(d));
+
+                    calendar.setOption('hiddenDays', hidden);
+                    calendar.setOption('businessHours', {
+                        daysOfWeek: parseOpenDays(OPEN_DAYS),
+                        startTime: (WORK_START || "08:00") + ":00",
+                        endTime: (WORK_END || "18:00") + ":00"
+                    });
+
+                    calendar.render();
+                    alert("Dni otwarcia zapisane.");
+                });
+            })();
+
+
+            // ==========================================================
+            // 5) REFERENCJE DO ADD MODALA + USTAWIENIA DATY
+            // ==========================================================
+            const addEventModalEl = document.getElementById('addEventModal');
+            const addForm = document.getElementById('addEventForm');
+
             const addDateInput = document.getElementById('eventDate');
             const addTimeSelect = document.getElementById('eventTime');
             const addServiceSelect = document.getElementById('eventTitle');
 
+            // blokada daty wstecz (min = dziś)
+            if (addDateInput) {
+                addDateInput.min = todayYmd();
+                if (!addDateInput.value) addDateInput.value = todayYmd();
+            }
+
+
+            // ==========================================================
+            // 6) WALIDACJE / NORMALIZACJE (telefon + rejestracja + VIN)
+            // ==========================================================
+            // --- telefon: min 9 cyfr (setCustomValidity -> działa z checkValidity) ---
+            const phoneInput = document.getElementById('customerPhone');
+
+            function validatePhoneDigits() {
+                if (!phoneInput) return true;
+
+                const digits = (phoneInput.value || '').replace(/\D/g, '');
+                const ok = digits.length >= 9;
+
+                phoneInput.setCustomValidity(ok ? '' : 'Numer telefonu musi zawierać co najmniej 9 cyfr.');
+                return ok;
+            }
+
+            phoneInput?.addEventListener('input', validatePhoneDigits);
+            phoneInput?.addEventListener('blur', validatePhoneDigits);
+            phoneInput?.addEventListener('paste', () => setTimeout(validatePhoneDigits, 0));
+
+            // --- rejestracja + vin: czyszczenie na bieżąco (żeby regex nie płakał) ---
+            const plateInput = document.getElementById('vehiclePlate');
+            const vinInput = document.getElementById('vehicleVin');
+
+            plateInput?.addEventListener('input', () => {
+                plateInput.value = plateInput.value.replace(/[\s-]/g, '').toUpperCase();
+            });
+
+            vinInput?.addEventListener('input', () => {
+                vinInput.value = vinInput.value.replace(/\s/g, '').toUpperCase();
+            });
+
+
+            // ==========================================================
+            // 7) MODAL “DODAJ” — wypełnianie selectów i reset po zamknięciu
+            // ==========================================================
             $('#addEventModal').on('shown.bs.modal', async function () {
                 fillServiceSelect(addServiceSelect, null);
 
@@ -455,14 +941,12 @@
             addDateInput?.addEventListener('change', async function () {
                 await fillFullHourSelect(addTimeSelect, addDateInput.value, null, null);
             });
-            // ---------------------------------------------------------------
 
-            const addEventModalEl = document.getElementById('addEventModal');
-
-            addEventModalEl.addEventListener('hidden.bs.modal', function () {
-                const form = document.getElementById('addEventForm');
+            addEventModalEl?.addEventListener('hidden.bs.modal', function () {
+                const form = addForm;
                 if (!form) return;
 
+                // czyścimy pola i klasy walidacji
                 form.querySelectorAll('input:not([type="hidden"]):not([readonly]), textarea, select')
                     .forEach(el => {
                         if (el.tagName === 'SELECT') el.selectedIndex = 0;
@@ -470,16 +954,23 @@
                         el.classList.remove('is-invalid', 'is-valid');
                     });
 
+                // selecty usług i godzin wracają do default
                 if (addTimeSelect) addTimeSelect.innerHTML = '<option value="">-- wybierz godzinę --</option>';
                 if (addServiceSelect) addServiceSelect.innerHTML = '<option value="">-- wybierz usługę --</option>';
+
+                // ważne: bez tego bootstrap pamięta walidację po zamknięciu
+                form.classList.remove('was-validated');
             });
 
-            document.getElementById('addEventButton').addEventListener('click', function () {
+            document.getElementById('addEventButton')?.addEventListener('click', function () {
                 var modal = new bootstrap.Modal(document.getElementById('addEventModal'));
                 modal.show();
             });
 
-            // ---------------- LOGIKA MAREK/MODELI (bez zmian) ----------------
+
+            // ==========================================================
+            // 8) SELECT2 + LOGIKA MAREK / MODELI
+            // ==========================================================
             const plSelect2 = { noResults: () => 'Brak wyników.' };
 
             function initSelect2() {
@@ -565,6 +1056,7 @@
                 loadModelsForMake(makeId, savedModelId);
             });
 
+            // init select2 + wczytanie marek/modeli przy otwarciu modala
             $('#addEventModal').on('shown.bs.modal', function () {
                 if ($('#vehicleMakeDropdown').length && !$('#vehicleMakeDropdown').hasClass('select2-hidden-accessible')) {
                     initSelect2();
@@ -573,10 +1065,47 @@
                 const savedModelId = '@ViewBag.VehicleModelId';
                 loadCarMakesToSelect(savedMakeId, savedModelId);
             });
-            // ----------------------------------------------------------------
 
-            // Obsługa zapisu nowego wydarzenia
-            document.getElementById('saveEventModalButton').addEventListener('click', function () {
+
+            // ==========================================================
+            // 9) DODAWANIE WIZYTY (walidacje + fetch + mapowanie błędów)
+            // ==========================================================
+            function clearValidationState(form) {
+                form.querySelectorAll('.is-invalid, .is-valid').forEach(el => {
+                    el.classList.remove('is-invalid', 'is-valid');
+                });
+            }
+
+            function setInvalid(fieldId, message) {
+                const el = document.getElementById(fieldId);
+                if (!el) return;
+
+                el.classList.add('is-invalid');
+
+                const fb = el.parentElement?.querySelector('.invalid-feedback');
+                if (fb && message) fb.textContent = message;
+            }
+
+            document.getElementById('saveEventModalButton')?.addEventListener('click', async function () {
+                const form = addForm;
+                if (!form) return;
+
+                clearValidationState(form);
+
+                // odpalamy walidację HTML5 + bootstrap
+                form.classList.add('was-validated');
+                validatePhoneDigits();
+                if (!form.checkValidity()) return;
+
+                // przy select2 walidacja czasem nie jest idealna - więc dopinamy “po swojemu”
+                if ($('#vehicleMakeDropdown').length && !$('#vehicleMakeDropdown').val()) {
+                    setInvalid('vehicleMakeDropdown', 'Wybierz markę pojazdu.');
+                    return;
+                }
+                if ($('#vehicleModelDropdown').length && !$('#vehicleModelDropdown').val()) {
+                    setInvalid('vehicleModelDropdown', 'Wybierz model pojazdu.');
+                    return;
+                }
 
                 const make = $('#vehicleMakeDropdown').length
                     ? $('#vehicleMakeDropdown option:selected').text()
@@ -586,10 +1115,31 @@
                     ? $('#vehicleModelDropdown option:selected').text()
                     : (document.getElementById('clientVehicleModel')?.value || null);
 
-                var newEvent = {
+                const dateVal = document.getElementById('eventDate').value;
+                const timeVal = document.getElementById('eventTime').value;
+                 // nie pozwalamy dodać w zamknięty dzień
+                const openSet = getOpenDaysSet();
+                const day = new Date(dateVal + "T00:00:00").getDay(); // 0..6
+                if (!openSet.has(day)) {
+                    setInvalid('eventDate', 'Warsztat jest zamknięty w wybrany dzień.');
+                    return;
+                }
+
+
+                // (duplikat z validatePhoneDigits - zostawiam, bo działa i jest czytelne)
+                // TODO: kiedyś można to uprościć i zostawić tylko setCustomValidity
+                const phoneEl = document.getElementById('customerPhone');
+                const rawPhone = phoneEl.value || '';
+                const digitsOnly = rawPhone.replace(/\D/g, '');
+                if (digitsOnly.length < 9) {
+                    setInvalid('customerPhone', 'Numer telefonu musi zawierać co najmniej 9 cyfr.');
+                    return;
+                }
+
+                const newEvent = {
                     workshopId: document.getElementById('workshopId').value,
-                    title: document.getElementById('eventTitle').value, // ✅ usługa
-                    start: document.getElementById('eventDate').value + 'T' + document.getElementById('eventTime').value,
+                    title: document.getElementById('eventTitle').value,
+                    start: `${dateVal}T${timeVal}`,
 
                     vehicleMake: make,
                     vehicleModel: model,
@@ -597,41 +1147,67 @@
                     vehiclePlate: document.getElementById('vehiclePlate')?.value || null,
                     vehicleVin: document.getElementById('vehicleVin')?.value || null,
                     customerPhone: document.getElementById('customerPhone').value,
-                    customerEmail: document.getElementById('customerEmail').value
+                    customerEmail: document.getElementById('customerEmail').value,
+                    faultDescription: document.getElementById('faultDescription')?.value || null
                 };
 
-                if (!newEvent.title) { alert("Wybierz usługę."); return; }
-                if (!document.getElementById('eventDate').value || !document.getElementById('eventTime').value) {
-                    alert("Wybierz datę i godzinę.");
-                    return;
-                }
-                if (!newEvent.customerPhone || !newEvent.customerEmail) {
-                    alert("Uzupełnij dane kontaktowe klienta.");
-                    return;
-                }
-                if ($('#vehicleMakeDropdown').length && !$('#vehicleMakeDropdown').val()) { alert("Wybierz markę pojazdu."); return; }
-                if ($('#vehicleModelDropdown').length && !$('#vehicleModelDropdown').val()) { alert("Wybierz model pojazdu."); return; }
-
-                fetch('/Workshop/AddEvent', {
+                const response = await fetch('/Workshop/AddEvent', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(newEvent)
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert("Wizyta została dodana.");
-                            calendar.refetchEvents();
-                            var modal = bootstrap.Modal.getInstance(document.getElementById('addEventModal'));
-                            modal.hide();
-                        } else {
-                            alert("Błąd: " + data.message);
+                });
+
+                // backend zwrócił błędy -> mapujemy pod pola
+                if (!response.ok) {
+                    const payload = await response.json().catch(() => null);
+
+                    if (payload?.message) {
+                        alert(payload.message);
+                        return;
+                    }
+
+                    if (payload?.errors) {
+                        const map = {
+                            WorkshopId: 'workshopId',
+                            Title: 'eventTitle',
+                            Start: 'eventTime',
+                            CustomerPhone: 'customerPhone',
+                            CustomerEmail: 'customerEmail',
+                            VehicleYear: 'vehicleYear',
+                            VehicleMake: 'vehicleMakeDropdown',
+                            VehicleModel: 'vehicleModelDropdown',
+                            VehiclePlate: 'vehiclePlate',
+                            VehicleVin: 'vehicleVin'
+                        };
+
+                        for (const key in payload.errors) {
+                            const msg = payload.errors[key]?.[0] ?? 'Niepoprawna wartość.';
+                            const fieldId = map[key];
+                            if (fieldId) setInvalid(fieldId, msg);
                         }
-                    })
-                    .catch(error => console.error("Błąd:", error));
+                        return;
+                    }
+
+                    alert("Wystąpił błąd walidacji.");
+                    return;
+                }
+
+                // sukces
+                const data = await response.json();
+                if (data.success) {
+                    alert("Wizyta została dodana.");
+                    calendar.refetchEvents();
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addEventModal'));
+                    modal.hide();
+                } else {
+                    alert("Błąd: " + (data.message || "nieznany"));
+                }
             });
 
-            // ------ MODAL SZCZEGÓŁÓW: usługa + pełne godziny + edycja ------
+
+            // ==========================================================
+            // 10) MODAL SZCZEGÓŁÓW (podgląd + edycja + usuwanie)
+            // ==========================================================
             let detailsCurrentEventId = null;
 
             async function refreshDetailTimesForCurrent() {
@@ -647,6 +1223,7 @@
                 var modal = new bootstrap.Modal(document.getElementById('eventDetailsModal'));
                 detailsCurrentEventId = event.id;
 
+                // rozbijamy start na date/time
                 const d = event.start;
                 const yyyy = d.getFullYear();
                 const mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -656,12 +1233,12 @@
                 const currentTime = `${hh}:${mi}`;
                 const ymd = `${yyyy}-${mm}-${dd}`;
 
-                // ✅ usługa (Title)
                 fillServiceSelect(document.getElementById('detailEventTitle'), event.title);
 
                 document.getElementById('detailEventDate').value = ymd;
                 fillFullHourSelect(document.getElementById('detailEventTime'), ymd, event.id, currentTime);
 
+                // extendedProps z FullCalendar -> do inputów
                 document.getElementById('detailVehicleMake').value = event.extendedProps.vehicleMake || '';
                 document.getElementById('detailVehicleModel').value = event.extendedProps.vehicleModel || '';
                 document.getElementById('detailVehicleYear').value = event.extendedProps.vehicleYear || '';
@@ -669,10 +1246,17 @@
                 document.getElementById('detailVehicleVin').value = event.extendedProps.vehicleVin || '';
                 document.getElementById('detailCustomerPhone').value = event.extendedProps.customerPhone || '';
                 document.getElementById('detailCustomerEmail').value = event.extendedProps.customerEmail || '';
+                const status = event.extendedProps.status ?? 0;
+                document.getElementById('detailStatus').value = String(status);
+                applyDetailsUiByStatus(status);
+                document.getElementById('detailWorkshopNote').value = event.extendedProps.workshopNote || '';
+                document.getElementById('detailFaultDescription').value = event.extendedProps.faultDescription || '';
 
                 modal.show();
 
                 if (isWorkshop) {
+
+                    // --- USUWANIE ---
                     document.getElementById('deleteEventButton').onclick = function () {
                         if (confirm("Czy na pewno chcesz usunąć tę wizytę?")) {
                             fetch('/Workshop/DeleteEvent', {
@@ -694,8 +1278,23 @@
                         }
                     };
 
+                    // --- TRYB EDYCJI ---
                     document.getElementById('editEventButton').onclick = function () {
-                        setFieldsEditable(true);
+                        const status = Number(document.getElementById('detailStatus').value || 0);
+
+                        // NEW -> normalna edycja
+                        if (status === 0) {
+                            setFieldsEditable(true); // Twoja istniejąca funkcja (title/date/time + pola)
+                            document.getElementById('detailWorkshopNote').readOnly = false;
+                            document.getElementById('detailStatus').disabled = false; // żeby można było przejść na InProgress/Done
+                        }
+
+                        // IN PROGRESS -> tylko opis + status
+                        if (status === 1) {
+                            setFieldsEditable(false); // blokuj pola wizyty
+                            document.getElementById('detailWorkshopNote').readOnly = false;
+                            document.getElementById('detailStatus').disabled = false; // pozwól zmienić na Done
+                        }
                         document.getElementById('editEventButton').classList.add('d-none');
                         document.getElementById('deleteEventButton').classList.add('d-none');
                         document.getElementById('saveEventButton').classList.remove('d-none');
@@ -705,10 +1304,11 @@
                         refreshDetailTimesForCurrent();
                     };
 
+                    // --- ZAPIS EDYCJI ---
                     document.getElementById('saveEventButton').onclick = function () {
                         var updatedEvent = {
                             id: event.id,
-                            title: document.getElementById('detailEventTitle').value, // ✅ usługa
+                            title: document.getElementById('detailEventTitle').value,
                             start: document.getElementById('detailEventDate').value + 'T' + document.getElementById('detailEventTime').value,
                             vehicleMake: document.getElementById('detailVehicleMake').value,
                             vehicleModel: document.getElementById('detailVehicleModel').value,
@@ -716,7 +1316,9 @@
                             vehiclePlate: document.getElementById('detailVehiclePlate').value,
                             vehicleVin: document.getElementById('detailVehicleVin').value,
                             customerPhone: document.getElementById('detailCustomerPhone').value,
-                            customerEmail: document.getElementById('detailCustomerEmail').value
+                            customerEmail: document.getElementById('detailCustomerEmail').value,
+                            status: Number(document.getElementById('detailStatus').value || 0),
+                            workshopNote: document.getElementById('detailWorkshopNote').value
                         };
 
                         if (!updatedEvent.title) { alert("Wybierz usługę."); return; }
@@ -754,6 +1356,7 @@
                             .catch(error => console.error("Błąd:", error));
                     };
 
+                    // --- ANULUJ EDYCJĘ ---
                     document.getElementById('cancelEditButton').onclick = function () {
                         setFieldsEditable(false);
                         document.getElementById('editEventButton').classList.remove('d-none');
@@ -766,6 +1369,7 @@
                 }
             }
 
+            // gdy w edycji zmieniamy datę -> odśwież listę godzin
             document.getElementById('detailEventDate')?.addEventListener('change', function () {
                 const detailsEl = document.getElementById('eventDetailsModal');
                 if (detailsEl?.classList.contains('editing')) refreshDetailTimesForCurrent();
@@ -782,18 +1386,24 @@
                 if (timeSel) timeSel.disabled = !isEditable;
             }
 
+
+            // ==========================================================
+            // 11) BLOKADY UI (nie zamykaj modala w trakcie edycji)
+            // ==========================================================
             const detailsModalEl = document.getElementById('eventDetailsModal');
 
             if (detailsModalEl) {
                 detailsModalEl.addEventListener('hide.bs.modal', function (e) {
                     if (detailsModalEl.classList.contains('editing')) e.preventDefault();
                 });
+
                 detailsModalEl.addEventListener('click', function (e) {
                     if (detailsModalEl.classList.contains('editing') && e.target === detailsModalEl) {
                         e.stopPropagation();
                         e.preventDefault();
                     }
                 }, true);
+
                 document.addEventListener('keydown', function (ev) {
                     if (ev.key === 'Escape' &&
                         detailsModalEl.classList.contains('show') &&
@@ -803,8 +1413,14 @@
                     }
                 }, true);
             }
+
         });
 
+
+        // ==========================================================
+        // 12) “MAŁY HACK” – uzupełnij vehicleYear po pokazaniu modala
+        //    (zostawiam jak jest - działa, nie ruszam)
+        // ==========================================================
         document.addEventListener('shown.bs.modal', function () {
             var input = document.getElementById('vehicleYear');
             if (!input) return;
