@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkShopManager.Data;
@@ -10,42 +11,45 @@ namespace WorkShopManager.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly WorkshopContext _context; // Dodano kontekst bazy danych
-
-        public HomeController(ILogger<HomeController> logger, WorkshopContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public HomeController(ILogger<HomeController> logger, WorkshopContext context, UserManager<ApplicationUser> userManager)
         {
             _logger = logger;
             _context = context;
+            _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             if (User.Identity.IsAuthenticated)
             {
-                var user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-                var roles = _context.UserRoles.Where(ur => ur.UserId == user.Id).Select(ur => ur.RoleId).ToList();
-                var workshopRoleId = "3bd7d0c5-f004-4ee2-9ea9-b49ce540e67b"; // Rola warsztatu
+                var user = await _userManager.GetUserAsync(User);
+                var isWorkShop = await _userManager.IsInRoleAsync(user, "Workshop");
 
-                if (roles.Contains(workshopRoleId))
+                if (!isWorkShop)
                 {
                     // Widok dla warsztatu
                     return View("IndexWorkshop", user);
                 }
             }
-
-            var workshops = _context.Users
-                .Where(u => _context.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == "3bd7d0c5-f004-4ee2-9ea9-b49ce540e67b"))
-                .Select(w => new
-                {
-                    w.Id,
-                    w.CompanyName,
-                    w.PhoneNumber,
-                    Address = $"{w.Street} {w.BuildingNumber}, {w.PostalCode} {w.City}",
-                    Services = w.Services,
-                    w.HourlyRate
-                })
-                .ToList();
-
-            ViewBag.Workshops = workshops;
+            
+            var workshops = await (
+                                                          from u in _context.Users
+                                                          join ur in _context.UserRoles on u.Id equals ur.UserId
+                                                          join r in _context.Roles on ur.RoleId equals r.Id
+                                                          where r.Name == "Workshop"
+                                                          select new
+                                                          {
+                                                              u.Id,
+                                                              u.CompanyName,
+                                                              u.PhoneNumber,
+                                                              Address = $"{u.Street} {u.BuildingNumber}, {u.PostalCode} {u.City}",
+                                                              Services = u.Services,
+                                                              u.HourlyRate
+                                                          }
+                                                      ).ToListAsync();
+                                          
+                                                      ViewBag.Workshops = workshops;
 
             return View();
         }
