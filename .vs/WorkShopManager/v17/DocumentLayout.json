@@ -44,7 +44,7 @@
               "RelativeDocumentMoniker": "Views\\Workshop\\Schedule.cshtml",
               "ToolTip": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Views\\Workshop\\Schedule.cshtml",
               "RelativeToolTip": "Views\\Workshop\\Schedule.cshtml",
-              "ViewState": "AgIAAMsCAAAAAAAAAAAYwNwCAAAtAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAANwCAAA3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-02-16T17:39:08.429Z",
               "EditorCaption": ""
@@ -83,8 +83,7 @@
               "RelativeToolTip": "wwwroot\\css\\bootstrap-theme-dark.css",
               "ViewState": "AgIAANIBAAAAAAAAAAAiwN4BAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-02-11T16:22:16.999Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-11T16:22:16.999Z"
             }
           ]
         }
