@@ -468,9 +468,9 @@
             function getOpenDaysSet() {
                 return new Set(parseOpenDays(OPEN_DAYS));
             }
-            function isMobile() {
+           function isMobile() {
                 return window.matchMedia('(max-width: 576px)').matches;
-            }
+           }
 
 
             // ==========================================================
@@ -674,12 +674,12 @@
                     const all = [0,1,2,3,4,5,6];
                     return all.filter(d => !open.has(d)); // ukryj zamknięte
                 })(),
-                headerToolbar: isMobile()
-                    ? { left: 'prev,next', center: 'title', right: 'today' }
-                    : { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
-                buttonText: isMobile()
-                    ? { today: 'Dziś' }
-                    : { dayGridMonth: 'Miesiąc', timeGridWeek: 'Tydzień', timeGridDay: 'Dzień' },
+                 headerToolbar: isMobile()
+                     ? { left: 'prev,next', center: 'title', right: 'today' }
+                     : { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
+                 buttonText: isMobile()
+                     ? { today: 'Dziś' }
+                     : { dayGridMonth: 'Miesiąc', timeGridWeek: 'Tydzień', timeGridDay: 'Dzień' },
                 events: '/Workshop/GetEvents?workshopId=' + workshopId,
                 editable: isWorkshop,
                 slotMinTime: (WORK_START || "08:00") + ":00",
@@ -696,8 +696,8 @@
                     startTime: (WORK_START || "08:00") + ":00",
                     endTime: (WORK_END || "18:00") + ":00"
                 },
-                windowResize: function () {
-                    calendar.changeView(isMobile() ? 'timeGridDay' : 'timeGridWeek');
+                 windowResize: function () {
+                     calendar.changeView(isMobile() ? 'timeGridDay' : 'timeGridWeek');
                 },
 
                 allDaySlot: false,
