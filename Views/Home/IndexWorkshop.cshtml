@@ -22,7 +22,7 @@
                     <p class="card-text">Zobacz listę zakończonych wizyt, dane klienta, pojazd i notatkę.</p>
                     <a asp-controller="Workshop"
                        asp-action="VisitHistory"
-                       class="btn btn-success">
+                       class="btn btn-primary">
                         Przejdź do historii
                     </a>
                 </div>
@@ -34,7 +34,16 @@
                 <div class="card-body text-center">
                     <h5 class="card-title">Zarządzaj Informacjami Warsztatu</h5>
                     <p class="card-text">Zmień dane swojego warsztatu, takie jak usługi, stawki godzinowe czy lokalizacja.</p>
-                    <a asp-controller="Account" asp-action="UserPanel" class="btn btn-secondary">Edytuj dane warsztatu</a>
+                    <a asp-controller="Account" asp-action="UserPanel" class="btn btn-primary">Edytuj dane warsztatu</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Zmiana hasła</h5>
+                    <p class="card-text">Zmień hasło na nowe.</p>
+                    <a asp-controller="Workshop" asp-action="ChangePassword" class="btn btn-primary">Zmień hasło</a>
                 </div>
             </div>
         </div>

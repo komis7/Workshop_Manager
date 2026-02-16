@@ -3,12 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|c:\\users\\komis\\desktop\\workshopmanager_good\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|solutionrelative:views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|c:\\users\\komis\\desktop\\workshopmanager_good\\views\\workshop\\schedule.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|solutionrelative:views\\workshop\\schedule.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|c:\\users\\komis\\desktop\\workshopmanager_good\\wwwroot\\css\\bootstrap-theme-dark.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|solutionrelative:wwwroot\\css\\bootstrap-theme-dark.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|c:\\users\\komis\\desktop\\workshopmanager_good\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|solutionrelative:views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|c:\\users\\komis\\desktop\\workshopmanager_good\\views\\client\\visithistory.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{3F4AF2EF-6AFD-45DB-B640-D1FD146E7ACF}|WorkShopManager.csproj|solutionrelative:views\\client\\visithistory.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,21 +26,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Views\\Home\\Index.cshtml",
-              "RelativeDocumentMoniker": "Views\\Home\\Index.cshtml",
-              "ToolTip": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Views\\Home\\Index.cshtml",
-              "RelativeToolTip": "Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-07T18:33:36.159Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{0174dea2-fdbe-4ef1-8f99-c0beae78880f}"
@@ -43,15 +38,52 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "Schedule.cshtml",
+              "DocumentMoniker": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Views\\Workshop\\Schedule.cshtml",
+              "RelativeDocumentMoniker": "Views\\Workshop\\Schedule.cshtml",
+              "ToolTip": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Views\\Workshop\\Schedule.cshtml",
+              "RelativeToolTip": "Views\\Workshop\\Schedule.cshtml",
+              "ViewState": "AgIAAMsCAAAAAAAAAAAYwNwCAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-16T17:39:08.429Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "Views\\Shared\\_Layout.cshtml",
               "ToolTip": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Views\\Shared\\_Layout.cshtml",
               "RelativeToolTip": "Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAACEAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-07T18:01:15.247Z",
+              "WhenOpened": "2026-02-11T16:29:10.945Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "VisitHistory.cshtml",
+              "DocumentMoniker": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Views\\Client\\VisitHistory.cshtml",
+              "RelativeDocumentMoniker": "Views\\Client\\VisitHistory.cshtml",
+              "ToolTip": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\Views\\Client\\VisitHistory.cshtml",
+              "RelativeToolTip": "Views\\Client\\VisitHistory.cshtml",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAA0AAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-11T16:25:48.789Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "bootstrap-theme-dark.css",
+              "DocumentMoniker": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\wwwroot\\css\\bootstrap-theme-dark.css",
+              "RelativeDocumentMoniker": "wwwroot\\css\\bootstrap-theme-dark.css",
+              "ToolTip": "C:\\Users\\komis\\Desktop\\WorkShopManager_good\\wwwroot\\css\\bootstrap-theme-dark.css",
+              "RelativeToolTip": "wwwroot\\css\\bootstrap-theme-dark.css",
+              "ViewState": "AgIAANIBAAAAAAAAAAAiwN4BAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-02-11T16:22:16.999Z",
               "EditorCaption": ""
             }
           ]

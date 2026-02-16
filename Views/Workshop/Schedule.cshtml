@@ -468,6 +468,9 @@
             function getOpenDaysSet() {
                 return new Set(parseOpenDays(OPEN_DAYS));
             }
+            function isMobile() {
+                return window.matchMedia('(max-width: 576px)').matches;
+            }
 
 
             // ==========================================================
@@ -659,7 +662,7 @@
             // ==========================================================
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 themeSystem: 'bootstrap5',
-                initialView: 'timeGridWeek',
+                initialView: isMobile() ? 'timeGridDay' : 'timeGridWeek',
                 height: 'auto',
                 expandRows: true,
                 locale: 'pl',
@@ -670,17 +673,12 @@
                     const all = [0,1,2,3,4,5,6];
                     return all.filter(d => !open.has(d)); // ukryj zamknięte
                 })(),
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                buttonText: {
-                    today: 'Dzisiaj',
-                    dayGridMonth: 'Miesiąc',
-                    timeGridWeek: 'Tydzień',
-                    timeGridDay: 'Dzień'
-                },
+                headerToolbar: isMobile()
+                    ? { left: 'prev,next', center: 'title', right: 'today' }
+                    : { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
+                buttonText: isMobile()
+                    ? { today: 'Dziś' }
+                    : { dayGridMonth: 'Miesiąc', timeGridWeek: 'Tydzień', timeGridDay: 'Dzień' },
                 events: '/Workshop/GetEvents?workshopId=' + workshopId,
                 editable: isWorkshop,
                 slotMinTime: (WORK_START || "08:00") + ":00",
@@ -696,6 +694,9 @@
                     daysOfWeek: parseOpenDays(OPEN_DAYS),
                     startTime: (WORK_START || "08:00") + ":00",
                     endTime: (WORK_END || "18:00") + ":00"
+                },
+                windowResize: function () {
+                    calendar.changeView(isMobile() ? 'timeGridDay' : 'timeGridWeek');
                 },
 
                 allDaySlot: false,
@@ -724,6 +725,14 @@
                         statusBadgeClass = 'status-dot--done';
                         info.el.style.backgroundColor = '#198754';
                         info.el.style.borderColor = '#198754';
+                    }
+                    if (!isMobile()) {
+                        new bootstrap.Tooltip(info.el, {
+                            title: tipText,
+                            html: true,
+                            placement: 'top',
+                            container: 'body'
+                        });
                     }
 
                     const tipText = `

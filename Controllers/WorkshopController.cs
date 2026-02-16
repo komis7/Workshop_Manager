@@ -454,7 +454,31 @@ namespace WorkShopManager.Controllers
             public string Max { get; set; } = "";
         }
 
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+                if (result.Succeeded)
+                {
+                    TempData["SuccessMessage"] = "Hasło zostało zmienione.";
+                    return RedirectToAction("ChangePassword");
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+            return View(model);
+        }
 
     }
 }

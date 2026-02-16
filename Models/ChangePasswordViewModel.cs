@@ -12,7 +12,9 @@ namespace WorkShopManager.Models
         [Required(ErrorMessage = "Podaj nowe hasło.")]
         [DataType(DataType.Password)]
         [Display(Name = "Nowe hasło")]
-        [StringLength(100, ErrorMessage = "Hasło musi mieć co najmniej {2} znaków.", MinimumLength = 6)]
+        //[StringLength(100, ErrorMessage = "Hasło musi mieć co najmniej {2} znaków.", MinimumLength = 6)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$",
+            ErrorMessage = "Hasło musi mieć co najmniej 8 znaków, zawierać wielką i małą literę, cyfrę oraz znak specjalny.")]
         public string NewPassword { get; set; }
 
         [Required(ErrorMessage = "Potwierdź nowe hasło.")]

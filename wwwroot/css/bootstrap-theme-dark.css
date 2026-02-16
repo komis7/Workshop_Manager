@@ -403,6 +403,81 @@ h1, h2, h3 {
 .fc-col-header-cell {
     background-color: #25272c;
 }
+/*Mobile*/
+@media (max-width: 576px) {
+    .container {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+ }
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: .5rem;
+    }
+
+    .modal-content {
+        border-radius: 14px;
+    }
+
+    .modal-body {
+        max-height: calc(100vh - 160px);
+        overflow: auto;
+    }
+ }
+@media (max-width: 576px) {
+    .btn {
+        padding: .6rem .9rem;
+    }
+ }
+@media (max-width: 576px) {
+
+    .navbar .container {
+        flex-wrap: nowrap !important;
+    }
+
+    .navbar-brand {
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .navbar-toggler,
+    .navbar .btn-group {
+        flex-shrink: 0;
+    }
+}
+
+@media (max-width: 576px) {
+
+    /* mniejszy, ale czytelny toolbar */
+    #calendar .fc .fc-toolbar-title {
+        font-size: 1.05rem;
+    }
+
+    /* przyciski w toolbarze – wygodniejsze */
+    #calendar .fc .fc-button {
+        padding: .45rem .6rem;
+        font-size: .95rem;
+    }
+
+    /* sloty godzin – trochę ciaśniej, żeby więcej było widać */
+    #calendar .fc .fc-timegrid-slot {
+        height: 42px; /* możesz dać 38px jeśli chcesz jeszcze ciaśniej */
+    }
+
+    /* etykiety godzin – czytelniejsze */
+    #calendar .fc .fc-timegrid-axis-cushion,
+    #calendar .fc .fc-timegrid-slot-label-cushion {
+        font-size: .85rem;
+    }
+
+    /* eventy – mniej paddingu, żeby się mieściły */
+    #calendar .fc .fc-event {
+        padding: 2px 4px;
+    }
+}
+
 
 
 

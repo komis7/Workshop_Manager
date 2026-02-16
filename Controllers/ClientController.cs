@@ -188,7 +188,7 @@ namespace WorkShopManager.Controllers
                 if (result.Succeeded)
                 {
                     TempData["SuccessMessage"] = "Hasło zostało zmienione.";
-                    return RedirectToAction("Dashboard");
+                    return RedirectToAction("ChangePassword");
                 }
                 foreach (var error in result.Errors)
                 {
