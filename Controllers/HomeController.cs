@@ -26,7 +26,7 @@ namespace WorkShopManager.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 var isWorkShop = await _userManager.IsInRoleAsync(user, "Workshop");
 
-                if (!isWorkShop)
+                if (isWorkShop)
                 {
                     // Widok dla warsztatu
                     return View("IndexWorkshop", user);
